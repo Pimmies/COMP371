@@ -637,6 +637,24 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+### CMake ###
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+CMakeUserPresets.json
+
+### CMake Patch ###
+# External projects
+*-prefix/
+
 Project1/glm-0.9.9.8/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,windows,macos,linux,xcode,clion,c++,c
