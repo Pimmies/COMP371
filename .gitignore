@@ -637,6 +637,6 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-Project1\glm-0.9.9.8/
+Project1/glm-0.9.9.8/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,windows,macos,linux,xcode,clion,c++,c
