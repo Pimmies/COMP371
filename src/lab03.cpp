@@ -145,7 +145,7 @@
 		// tell GLFW to capture our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE); //sticky mouse button enabled so that press and release are captured
-
+        
 		//VERTICES FOR A CUBE
 		float vertices[] = {
 			//position
@@ -241,7 +241,7 @@
 
 			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
 			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
-            drawCharles(shaderProgram, glm::vec3(5.0f, 0.0f, 0.0f));
+            drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
             
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -288,10 +288,10 @@
         glUniformMatrix4fv(studentMatrixLoc, 1, GL_FALSE, glm::value_ptr(studentMatrix));  //one student matrix applied to every letter so that the letters move as a group
 
         //draw letters
-        //drawC(shaderProgram, glm::vec3(-10.0f, -5.0f, 0.0f)); //check this function for detailed explanation
-        drawR(shaderProgram, glm::vec3(-6.0f, -5.0f, 0.0f));
-        draw4(shaderProgram, glm::vec3(-3.0f, -5.0f, 0.0f));
-        draw3(shaderProgram, glm::vec3(-0.5f, -5.0f, 0.0f));
+        drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f)); //check this function for detailed explanation
+        drawR(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f));
+        draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f));
+        draw3(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f));
         
     }
 
@@ -749,6 +749,13 @@
     }
 
     void drawR(int shaderProgram, glm::vec3 translationMatrix){
+        
+        glm::mat4 letterMatrix = glm::mat4(1.0f);
+        letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+        unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+        glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
+        
         //1 - top (horizontal)
         glm::mat4 transform = glm::mat4(1.0f);
         transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
@@ -780,6 +787,16 @@
         transform = glm::mat4(1.0f);
         transform = glm::translate(transform, glm::vec3(0.5f, 0.5f, 0.0f));
         transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+        
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        //5 - right (diagonal)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.25f, -0.75f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(35.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+        
         
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
         glDrawArrays(GL_TRIANGLES, 0, 36);
