@@ -26,18 +26,19 @@
 	void drawCamil(int shaderProgram, glm::vec3 translationMatrix);
 	void drawJulie(int shaderProgram, glm::vec3 translationMatrix);
     void drawClaudia(int shaderProgram, glm::vec3 translationMatrix);
+    void drawCharles(int shaderProgram, glm::vec3 translationMatrix);
     void drawJ(int shaderProgram, glm::vec3 translationMatrix);
 	void drawP(int shaderProgram, glm::vec3 translationMatrix);
 	void draw4(int shaderProgram, glm::vec3 translationMatrix);
 	void draw5(int shaderProgram, glm::vec3 translationMatrix);
     void drawC(int shaderProgram, glm::vec3 translationMatrix);
     void drawG(int shaderProgram, glm::vec3 translationMatrix);
+    void drawR(int shaderProgram, glm::vec3 translationMatrix);
     void draw2(int shaderProgram, glm::vec3 translationMatrix);
     void draw9(int shaderProgram, glm::vec3 translationMatrix);
 	void drawB(int shaderProgram, glm::vec3 translationMatrix);
 	void draw1(int shaderProgram, glm::vec3 translationMatrix);
-	
-
+    void draw3(int shaderProgram, glm::vec3 translationMatrix);
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
@@ -147,7 +148,7 @@
 		// tell GLFW to capture our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE); //sticky mouse button enabled so that press and release are captured
-
+        
 		//VERTICES FOR A CUBE
 		float vertices[] = {
 			//position
@@ -244,7 +245,8 @@
 			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
 			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
 			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
-
+			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
+            
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
@@ -279,8 +281,23 @@
 		draw5(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f));
 	}
 
-	void drawCharles(int shaderProgram, glm::vec3 translationMatrix)
-	{}
+    void drawCharles(int shaderProgram, glm::vec3 translationMatrix){
+        glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
+        studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+
+        //get uniform location of the studentMatrix
+        unsigned int studentMatrixLoc = glGetUniformLocation(shaderProgram, "studentMatrix");
+
+        //update the studentMatrix uniform to our latest settings (set above)
+        glUniformMatrix4fv(studentMatrixLoc, 1, GL_FALSE, glm::value_ptr(studentMatrix));  //one student matrix applied to every letter so that the letters move as a group
+
+        //draw letters
+        drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f)); //check this function for detailed explanation
+        drawR(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f));
+        draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f));
+        draw3(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f));
+        
+    }
 
 	void drawClaudia(int shaderProgram, glm::vec3 translationMatrix) {
         glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
@@ -824,8 +841,110 @@
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
+    
+    void draw3(int shaderProgram, glm::vec3 translationMatrix){
+        
+        glm::mat4 letterMatrix = glm::mat4(1.0f);
+        letterMatrix = glm::translate(letterMatrix, translationMatrix);
 
+        unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+        glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
 
+        //1 - top (horizontal)
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //2 middle (horizontal)
+        transform = glm::mat4(1.0f);
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //3 - lower (horizontal)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        //4 - right (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, 0.0f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
+        
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+
+    void drawR(int shaderProgram, glm::vec3 translationMatrix){
+        
+        glm::mat4 letterMatrix = glm::mat4(1.0f);
+        letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+        unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+        glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
+        
+        //1 - top (horizontal)
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //2 middle (horizontal)
+        transform = glm::mat4(1.0f);
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        //3 - left (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
+        
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        //4 - right (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, 0.5f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+        
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        //5 - right (diagonal)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.25f, -0.75f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(35.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+        
+        
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 	//when the window size is changed, this function is called
 	void framebuffer_size_callback(GLFWwindow * window, int width, int height)
 	{
