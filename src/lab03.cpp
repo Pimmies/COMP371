@@ -25,14 +25,20 @@
 	void cursor_position_callback(GLFWwindow * window, double xpos, double ypos);
 	void drawCamil(int shaderProgram, glm::vec3 translationMatrix);
 	void drawJulie(int shaderProgram, glm::vec3 translationMatrix);
-	void drawB(int shaderProgram, glm::vec3 letterMatrix);
-	void drawJ(int shaderProgram, glm::vec3 letterMatrix);
-	void drawP(int shaderProgram, glm::vec3 letterMatrix);
-	void draw1(int shaderProgram, glm::vec3 letterMatrix);
-	void draw4(int shaderProgram, glm::vec3 letterMatrix);
-	void draw5(int shaderProgram, glm::vec3 letterMatrix);
+    void drawClaudia(int shaderProgram, glm::vec3 translationMatrix);
+    void drawJ(int shaderProgram, glm::vec3 translationMatrix);
+	void drawP(int shaderProgram, glm::vec3 translationMatrix);
+	void draw4(int shaderProgram, glm::vec3 translationMatrix);
+	void draw5(int shaderProgram, glm::vec3 translationMatrix);
+    void drawC(int shaderProgram, glm::vec3 translationMatrix);
+    void drawG(int shaderProgram, glm::vec3 translationMatrix);
+    void draw2(int shaderProgram, glm::vec3 translationMatrix);
+    void draw9(int shaderProgram, glm::vec3 translationMatrix);
+	void drawB(int shaderProgram, glm::vec3 translationMatrix);
+	void draw1(int shaderProgram, glm::vec3 translationMatrix);
+	
 
-	// screen size settings
+// screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
 
@@ -236,6 +242,7 @@
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
+			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -274,8 +281,22 @@
 	void drawCharles(int shaderProgram, glm::vec3 translationMatrix)
 	{}
 
-	void drawClaudia(int shaderProgram, glm::vec3 translationMatrix)
-	{}
+	void drawClaudia(int shaderProgram, glm::vec3 translationMatrix) {
+        glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
+        studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+
+        //get uniform location of the studentMatrix
+        unsigned int studentMatrixLoc = glGetUniformLocation(shaderProgram, "studentMatrix");
+
+        //update the studentMatrix uniform to our latest settings (set above)
+        glUniformMatrix4fv(studentMatrixLoc, 1, GL_FALSE, glm::value_ptr(studentMatrix));  //one student matrix applied to every letter so that the letters move as a group
+
+        //draw letters
+        drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f));
+        drawG(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f));
+        draw2(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f));
+        draw9(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f));
+	}
 
 	void drawMax(int shaderProgram, glm::vec3 translationMatrix)
 	{}
@@ -601,6 +622,191 @@
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+
+    void drawC(int shaderProgram, glm::vec3 translationMatrix)
+{
+    glm::mat4 letterMatrix = glm::mat4(1.0f);
+    letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+    unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+    glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
+
+    //1st cube
+    glm::mat4 transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+    unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //2
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //3
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 2.5f, 1.0f));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+    void drawG(int shaderProgram, glm::vec3 translationMatrix)
+{
+    glm::mat4 letterMatrix = glm::mat4(1.0f);
+    letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+    unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+    glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
+
+    //1st cube - bottom (horizontal)
+    glm::mat4 transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 1.75f, 1.0f));
+
+    unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //2 - top (horizontal)
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 1.75f, 1.0f));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //3 - middle (horizontal)
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(0.5f, 0.0f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 1.0f, 1.0f));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //4 - right (vertical)
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(0.75f, -0.75f, 0.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //5 - left (vertical)
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(-0.62f, 0.0f, 0.0f));
+    transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 1.0f));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+    void draw2(int shaderProgram, glm::vec3 translationMatrix)
+    {
+        glm::mat4 letterMatrix = glm::mat4(1.0f);
+        letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+        unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+        glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
+
+        //1st cube - bottom (horizontal)
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //2 - top (horizontal)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //3 middle (horizontal)
+        transform = glm::mat4(1.0f);
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //4 - right (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(-0.5f, -0.75f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //5 - left (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, 0.75f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    void draw9(int shaderProgram, glm::vec3 translationMatrix)
+    {
+        glm::mat4 letterMatrix = glm::mat4(1.0f);
+        letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+        unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix");
+        glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix));
+
+        //1 - top (horizontal)
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //2 middle (horizontal)
+        transform = glm::mat4(1.0f);
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //3 - right (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, 0.0f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //4 - left (vertical)
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(-0.5f, 0.75f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 
 
 	//when the window size is changed, this function is called
