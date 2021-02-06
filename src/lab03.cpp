@@ -243,6 +243,7 @@
 
 			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
 			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
+			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -301,9 +302,25 @@
 	void drawMax(int shaderProgram, glm::vec3 translationMatrix)
 	{}
 
+	//draws Camil group of letter
+	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
+	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
 	void drawCamil(int shaderProgram, glm::vec3 translationMatrix)
 	{
+		glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
+		studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
 
+		//get uniform location of the studentMatrix
+		unsigned int studentMatrixLoc = glGetUniformLocation(shaderProgram, "studentMatrix");
+
+		//update the studentMatrix uniform to our latest settings (set above)
+		glUniformMatrix4fv(studentMatrixLoc, 1, GL_FALSE, glm::value_ptr(studentMatrix));  //one student matrix applied to every letter so that the letters move as a group
+
+		//draw letters
+		drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f)); //check this function for detailed explanation
+		drawB(shaderProgram, glm::vec3(-2.5f, 0.0f, 0.0f));
+		draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f));
+		draw1(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f));
 	}
 
 	//draws a B
