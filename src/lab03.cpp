@@ -23,6 +23,7 @@
 	void processInput(GLFWwindow * window);
 	void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
 	void cursor_position_callback(GLFWwindow * window, double xpos, double ypos);
+	void drawCamil(int shaderProgram, glm::vec3 translationMatrix);
 	void drawJulie(int shaderProgram, glm::vec3 translationMatrix);
     void drawClaudia(int shaderProgram, glm::vec3 translationMatrix);
     void drawCharles(int shaderProgram, glm::vec3 translationMatrix);
@@ -35,6 +36,8 @@
     void drawR(int shaderProgram, glm::vec3 translationMatrix);
     void draw2(int shaderProgram, glm::vec3 translationMatrix);
     void draw9(int shaderProgram, glm::vec3 translationMatrix);
+	void drawB(int shaderProgram, glm::vec3 translationMatrix);
+	void draw1(int shaderProgram, glm::vec3 translationMatrix);
     void draw3(int shaderProgram, glm::vec3 translationMatrix);
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -241,7 +244,8 @@
 
 			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
 			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
-            drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
+			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
+			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
             
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -315,8 +319,97 @@
 	void drawMax(int shaderProgram, glm::vec3 translationMatrix)
 	{}
 
+	//draws Camil group of letter
+	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
+	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
 	void drawCamil(int shaderProgram, glm::vec3 translationMatrix)
-	{}
+	{
+		glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
+		studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+
+		//get uniform location of the studentMatrix
+		unsigned int studentMatrixLoc = glGetUniformLocation(shaderProgram, "studentMatrix");
+
+		//update the studentMatrix uniform to our latest settings (set above)
+		glUniformMatrix4fv(studentMatrixLoc, 1, GL_FALSE, glm::value_ptr(studentMatrix));  //one student matrix applied to every letter so that the letters move as a group
+
+		//draw letters
+		drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f)); //check this function for detailed explanation
+		drawB(shaderProgram, glm::vec3(-2.5f, 0.0f, 0.0f));
+		draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f));
+		draw1(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f));
+	}
+
+	//draws a B
+	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
+	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
+	void drawB(int shaderProgram, glm::vec3 translationMatrix)
+	{
+		glm::mat4 letterMatrix = glm::mat4(1.0f); //the letterMatrix is originally the identity matrix.
+		letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+		unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix"); //get uniform location
+		glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix)); //update the uniform with our latest settings
+														 //&letterMatrix[0][0]
+
+		//1st cube: long one
+		glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
+		transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 0.5f)); //scale it
+
+		//update uniform location matrix
+		unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+		//2nd cube: bottom base
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.8f, -1.25f, 0.0f)); //third translate
+		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+		transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+		//3rd cube: top part
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.6f, 1.25f, 0.0f)); //third translate
+		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+		transform = glm::scale(transform, glm::vec3(0.5f, 1.0f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//4th cube: middle part
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.8f, 0.01f, 0.0f)); //third translate
+		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+		transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//5th cube: close top loop
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(1.0f, 0.8f, 0.0f)); //third translate
+		transform = glm::scale(transform, glm::vec3(0.5f, 1.4f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//6th cube: close bottom loop
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(1.8f, -0.62f, 0.0f)); //third translate
+		transform = glm::scale(transform, glm::vec3(0.5f, 1.76f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 
 	//draws a J
 	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
@@ -418,6 +511,57 @@
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
+	//draws a 1
+	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
+	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
+	void draw1(int shaderProgram, glm::vec3 translationMatrix)
+	{
+		glm::mat4 letterMatrix = glm::mat4(1.0f); //the letterMatrix is originally the identity matrix.
+		letterMatrix = glm::translate(letterMatrix, translationMatrix);
+
+		unsigned int letterMatrixLoc = glGetUniformLocation(shaderProgram, "letterMatrix"); //get uniform location
+		glUniformMatrix4fv(letterMatrixLoc, 1, GL_FALSE, glm::value_ptr(letterMatrix)); //update the uniform with our latest settings
+														 //&letterMatrix[0][0]
+
+		//1st cube: long vertical
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 0.5f));
+
+		//update uniform location matrix
+		unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+		//2nd cube: base
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f)); //second translate
+		transform = glm::scale(transform, glm::vec3(1.75f, 0.5f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//3rd cube: first part of hanging part
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(-0.30f, 1.25f, 0.0f)); //second translate
+		transform = glm::scale(transform, glm::vec3(0.75f, 0.5f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		
+		//4th cube: rotated hanging part
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(-0.82f, 1.06f, 0.0f)); //third translate
+		transform = glm::rotate(transform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+		transform = glm::scale(transform, glm::vec3(0.8f, 0.4f, 0.5f));  //first scale
+
+		//update uniform location matrix
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+	
 	//draws a 4
 	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
