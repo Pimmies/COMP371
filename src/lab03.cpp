@@ -42,7 +42,7 @@
     void draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    void drawGrid();
+    void drawGrid(int shaderProgram, glm::vec3 translationMatrix);
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -236,7 +236,6 @@
 
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            drawGrid();
 
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
 			projection = glm::perspective(glm::radians(fieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f); //the perspective is updated every frame because the fieldOfView is dynamically changed by zooming
@@ -245,13 +244,13 @@
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
-			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
-			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
-			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
-            drawMax(shaderProgram, glm::vec3(0.0f, -10.0f, 0.0f));
+            drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
+//            drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
+//			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
+//			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
+//			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
+//            drawMax(shaderProgram, glm::vec3(0.0f, -10.0f, 0.0f));
 
-            glFlush();
             glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
@@ -265,13 +264,18 @@
 		return 0;
 	}
 
-	void drawGrid() {
+	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
+        glm::mat4 gridMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
+        gridMatrix = glm::translate(gridMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+        unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(gridMatrix));
+
         int i;
         for(i = 0; i <= 40; i++) {
-            glPushMatrix();
 
+            glPushMatrix();
             if (i<20) {
-                glTranslatef(0,0,i);
+                glTranslatef(0, i, 0);
 
             } else {
                 glTranslatef(i-20, 0, 0);
@@ -279,15 +283,15 @@
             }
 
             glBegin(GL_LINES);
-            glColor3f(1,1,1);
-            glLineWidth(1);
-            glVertex3f(0,-0.1,0);
-            glVertex3f(19, -0.1, 0);
+                glColor3f(1,1,1);
+                glLineWidth(2);
+                glVertex3f(0, -0.1,0);
+                glVertex3f(19, -0.1, 0);
             glEnd();
             glPopMatrix();
         }
-
-	}
+        glDrawArrays(GL_LINES, 0, 36);
+    }
 
 	//translationMatrix: this matrix gets applied to the studentMatrix. This in turn allows to move the group of letters around
 	void drawJulie(int shaderProgram, glm::vec3 translationMatrix)
