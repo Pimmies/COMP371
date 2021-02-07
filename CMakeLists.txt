@@ -24,7 +24,7 @@ set(EXEC lab03)
 
 file(GLOB SRC src/*.cpp)
 
-add_executable(${EXEC} ${SRC})
+add_executable(${EXEC} ${SRC} src/helpers/LetterHelper.cpp src/helpers/LetterHelper.h)
 
 target_link_libraries(${EXEC} OpenGL::GL glew_s glfw glm)
 
