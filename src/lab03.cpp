@@ -39,7 +39,8 @@
 	void drawB(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
 	void draw1(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-// screen size settings
+	
+	// screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
 
@@ -212,7 +213,6 @@
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
 		glm::mat4 view; //updated in render loop
 		glm::mat4 projection; //updated in render loop
 
@@ -258,8 +258,6 @@
 		return 0;
 	}
 
-	//draws Julie
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the studentMatrix. This in turn allows to move the group of letters around
 	void drawJulie(int shaderProgram, glm::vec3 translationMatrix)
 	{
@@ -267,12 +265,13 @@
 		studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
 
 		//draw letters
-		drawJ(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
-		/*drawP(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
+		drawJ(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
+		drawP(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
 		draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
-		draw5(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);*/
+		draw5(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
 	}
 
+	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
     void drawCharles(int shaderProgram, glm::vec3 translationMatrix){
 
         glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
@@ -286,6 +285,7 @@
         
     }
 
+	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
 	void drawClaudia(int shaderProgram, glm::vec3 translationMatrix) {
         
 		glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
@@ -298,11 +298,10 @@
         draw9(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
 	}
 
+	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
 	void drawMax(int shaderProgram, glm::vec3 translationMatrix)
 	{}
 
-	//draws Camil group of letter
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
 	void drawCamil(int shaderProgram, glm::vec3 translationMatrix)
 	{
@@ -316,8 +315,6 @@
 		draw1(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
 	}
 
-	//draws a B
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
 	void drawB(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
@@ -406,8 +403,6 @@
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-	//draws a J
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
 	void drawJ(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
@@ -419,11 +414,10 @@
 		glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
 		transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f)); //scale it
 
-		//update uniform location world matrix
+		//declare worldMatrix, get location and update
 		glm::mat4 worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
 		glDrawArrays(GL_TRIANGLES, 0, 36); //now we can draw that 1st cube!
@@ -437,12 +431,9 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36); // now we draw!
-
-		//etc...
 
 		//3rd cube
 		transform = glm::mat4(1.0f);
@@ -452,9 +443,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//4th cube
@@ -466,14 +456,11 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-	//draws a P
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
 	void drawP(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
@@ -484,12 +471,12 @@
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
 
-		//update uniform location world matrix
+		//declare and update uniform location world matrix
 		glm::mat4 worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//2
@@ -501,9 +488,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+	
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//3
@@ -515,9 +501,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+	
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//4
@@ -528,14 +513,11 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+	
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-	//draws a 1
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
 	void draw1(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
@@ -596,8 +578,6 @@
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 	
-	//draws a 4
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
 	void draw4(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
@@ -608,12 +588,12 @@
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
 
-		//update uniform location world matrix
+		//declare and update uniform location world matrix
 		glm::mat4 worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//2
@@ -625,9 +605,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+	
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//3
@@ -639,14 +618,11 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-	//draws a 5
-	//shaderProgram: our shader program (composed of the vertex and fragment shaders)
 	//translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
 	void draw5(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
@@ -659,12 +635,12 @@
 		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
 
-		//update uniform location world matrix
+		//declare and update uniform location world matrix
 		glm::mat4 worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//2
@@ -676,9 +652,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//3
@@ -689,9 +664,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//4
@@ -702,9 +676,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+	
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//5
@@ -715,9 +688,8 @@
 		//update uniform location world matrix
 		worldMatrix = glm::mat4(1.0f);
 		worldMatrix = studentMatrix * letterMatrix * transform;
-
-		worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrixLoc");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
@@ -841,6 +813,7 @@
 	glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+	
 	void draw2(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
 	{
         glm::mat4 letterMatrix = glm::mat4(1.0f);
@@ -1094,6 +1067,7 @@
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
+	
 	//when the window size is changed, this function is called
 	void framebuffer_size_callback(GLFWwindow * window, int width, int height)
 	{
