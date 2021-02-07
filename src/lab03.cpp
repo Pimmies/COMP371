@@ -9,7 +9,6 @@
 
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
-
 #include <GLFW/glfw3.h> // cross-platform interface for creating a graphical context,
                         // initializing OpenGL and binding inputs
 
@@ -17,8 +16,9 @@
 #include <glm/gtc/matrix_transform.hpp> // include this to create transformation matrices
 #include <glm/common.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 
-	//declare our functions
+//declare our functions
 	void framebuffer_size_callback(GLFWwindow * window, int width, int height);
 	void processInput(GLFWwindow * window);
 	void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
@@ -42,6 +42,7 @@
     void draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    void drawGrid();
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -235,8 +236,9 @@
 
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            drawGrid();
 
-			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
+            view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
 			projection = glm::perspective(glm::radians(fieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f); //the perspective is updated every frame because the fieldOfView is dynamically changed by zooming
 
 			//pass updated settings to the shader
@@ -248,8 +250,9 @@
 			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
 			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
             drawMax(shaderProgram, glm::vec3(0.0f, -10.0f, 0.0f));
-            
-			glfwSwapBuffers(window);
+
+            glFlush();
+            glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
 
@@ -260,6 +263,30 @@
 
 		glfwTerminate();
 		return 0;
+	}
+
+	void drawGrid() {
+        int i;
+        for(i = 0; i <= 40; i++) {
+            glPushMatrix();
+
+            if (i<20) {
+                glTranslatef(0,0,i);
+
+            } else {
+                glTranslatef(i-20, 0, 0);
+                glRotatef(-90, 0, 1, 0);
+            }
+
+            glBegin(GL_LINES);
+            glColor3f(1,1,1);
+            glLineWidth(1);
+            glVertex3f(0,-0.1,0);
+            glVertex3f(19, -0.1, 0);
+            glEnd();
+            glPopMatrix();
+        }
+
 	}
 
 	//translationMatrix: this matrix gets applied to the studentMatrix. This in turn allows to move the group of letters around
