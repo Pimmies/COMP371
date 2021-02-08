@@ -4,10 +4,17 @@ Controls:
 Right click + move cursor along x-axis = pan
 Middle click + move cursor along y-axis = tilt
 Left click + move cursor along y-axis = zoom
-Direction arrows = "walk" around
+Direction arrows = "fly" around
+Keys 1-5 = select a model
+W = move selected model up
+A = move selected model left
+S = move selected model down
+D = move selected model right
+U = scale selected model up
+J = scale selected model down
+O = rotate selected model left
+P = rotate selected model right
 Escape key = exit the application
-
-
 
 
 ## Build Instructions

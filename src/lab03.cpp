@@ -23,11 +23,20 @@
 	void processInput(GLFWwindow * window);
 	void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
 	void cursor_position_callback(GLFWwindow * window, double xpos, double ypos);
-	void drawCamil(int shaderProgram, glm::vec3 translationMatrix);
-	void drawJulie(int shaderProgram, glm::vec3 translationMatrix);
-    void drawClaudia(int shaderProgram, glm::vec3 translationMatrix);
-    void drawCharles(int shaderProgram, glm::vec3 translationMatrix);
-	void drawMax(int shaderProgram, glm::vec3 translationMatrix);
+	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void scaleModelUp();
+	void scaleModelDown();
+	void moveModelLeft();
+	void moveModelRight();
+	void moveModelUp();
+	void moveModelDown();
+	void rotateModelLeft();
+	void rotateModelRight();
+	void drawCamil(int shaderProgram, glm::mat4 studentMatrix);
+	void drawJulie(int shaderProgram, glm::mat4 studentMatrix);
+    void drawClaudia(int shaderProgram, glm::mat4 studentMatrix);
+    void drawCharles(int shaderProgram, glm::mat4 studentMatrix);
+	void drawMax(int shaderProgram, glm::mat4 studentMatrix);
     void drawJ(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
 	void drawP(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
 	void draw4(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
@@ -43,7 +52,7 @@
     void drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
 
-// screen size settings
+	// screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
 
@@ -52,6 +61,11 @@
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	//selected student
+	//0:Julie 1:Claudia 2:Camil 3:Charles 4:Max
+	int currentStudent = -1;
+	glm::mat4 studentMatrixArray[5];
+	
 	//user input settings
 	//panning (left right) and tilting (up down), zoom
 	bool enablePan = false; //initially false until right click is pressed
@@ -110,6 +124,7 @@
 		glfwMakeContextCurrent(window);
 		glfwSetCursorPosCallback(window, cursor_position_callback); //call mouse_callback automatically every time the mouse moves
 		glfwSetMouseButtonCallback(window, mouse_button_callback);
+		glfwSetKeyCallback(window, key_callback);
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); //call framebuffer_size_callback automatically every time the window is resized in order to adjust the view port
 
 		// Initialize GLEW
@@ -211,10 +226,16 @@
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
 		glEnableVertexAttribArray(0);
 
-		//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));  //tells gpu how to interpret texture
-		//glEnableVertexAttribArray(1);
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		//initial placement of students in world
+		for (int i = 0; i < 5; i++)
+		{
+			studentMatrixArray[i] = glm::mat4(1.0f);
+			studentMatrixArray[i] = glm::translate(studentMatrixArray[i], glm::vec3(0.0f, 0.0f, (float)(i * -5)));
+		}
+
+		//studentMatrixArray[0] = glm::translate(studentMatrixArray[0], glm::vec3(-5.0f, 0.0f, 0.0f));
 
 		glm::mat4 view; //updated in render loop
 		glm::mat4 projection; //updated in render loop
@@ -243,11 +264,11 @@
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
-			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
-			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
-			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
-            drawMax(shaderProgram, glm::vec3(0.0f, -10.0f, 0.0f));
+			drawJulie(shaderProgram, studentMatrixArray[0]);
+			drawClaudia(shaderProgram, studentMatrixArray[1]);
+			drawCamil(shaderProgram, studentMatrixArray[2]);
+			drawCharles(shaderProgram, studentMatrixArray[3]);
+            drawMax(shaderProgram, studentMatrixArray[4]);
             
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -262,12 +283,8 @@
 		return 0;
 	}
 
-	//translationMatrix: this matrix gets applied to the studentMatrix. This in turn allows to move the group of letters around
-	void drawJulie(int shaderProgram, glm::vec3 translationMatrix)
+	void drawJulie(int shaderProgram, glm::mat4 studentMatrix)
 	{
-		glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
-		studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
-
 		//draw letters
 		drawJ(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
 		drawP(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
@@ -275,25 +292,17 @@
 		draw5(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
 	}
 
-	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
-    void drawCharles(int shaderProgram, glm::vec3 translationMatrix){
-
-        glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
-        studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+    void drawCharles(int shaderProgram, glm::mat4 studentMatrix){
 
         //draw letters
-        drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
+        drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
         drawR(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
         draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
         draw3(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
         
     }
 
-	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
-	void drawClaudia(int shaderProgram, glm::vec3 translationMatrix) {
-        
-		glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
-        studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+	void drawClaudia(int shaderProgram, glm::mat4 studentMatrix) {
         
         //draw letters
         drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
@@ -302,27 +311,20 @@
         draw9(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
 	}
 
-	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
-	void drawMax(int shaderProgram, glm::vec3 translationMatrix)
+	void drawMax(int shaderProgram, glm::mat4 studentMatrix)
 	{
-        glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
-        studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
-
         //draw letters
-        drawN(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
+        drawN(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
         drawS(shaderProgram, glm::vec3(-2.3f, 0.0f, 0.0f), studentMatrix);
         draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
         draw9(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
     }
 
-	//translationMatrix: gets applied to the studentMatrix. Allows to move the group of letters around
-	void drawCamil(int shaderProgram, glm::vec3 translationMatrix)
+	void drawCamil(int shaderProgram, glm::mat4 studentMatrix)
 	{
-		glm::mat4 studentMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
-		studentMatrix = glm::translate(studentMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
 
 		//draw letters
-		drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
+		drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
 		drawB(shaderProgram, glm::vec3(-2.5f, 0.0f, 0.0f), studentMatrix);
 		draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
 		draw1(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
@@ -1188,34 +1190,17 @@
 	void mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
 	{
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) //enable pan when pressed
-		{
 			enablePan = true;
-		}
-
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) //disable pan when released
-		{
 			enablePan = false;
-		}
-
 		if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) //enable tilt when pressed
-		{
 			enableTilt = true;
-		}
-
 		if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE) //disable tilt when released
-		{
 			enableTilt = false;
-		}
-
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) //enable zoom when pressed
-		{
 			enableZoom = true;
-		}
-
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) //disable zoom when released
-		{
 			enableZoom = false;
-		}
 	}
 
 	//when the cursor moves, this function is called
@@ -1289,6 +1274,28 @@
 		}
 	}
 
+	//documentation: https://www.glfw.org/docs/3.3/input_guide.html
+	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		//transform student
+		if (key == GLFW_KEY_W && action == GLFW_PRESS)
+			moveModelUp();
+		if (key == GLFW_KEY_A && action == GLFW_PRESS)
+			moveModelLeft();
+		if (key == GLFW_KEY_S && action == GLFW_PRESS)
+			moveModelDown();
+		if (key == GLFW_KEY_D && action == GLFW_PRESS)
+			moveModelRight();
+		if (key == GLFW_KEY_U && action == GLFW_PRESS)
+			scaleModelUp();
+		if (key == GLFW_KEY_J && action == GLFW_PRESS)
+			scaleModelDown();
+		if (key == GLFW_KEY_O && action == GLFW_PRESS)
+			rotateModelLeft();
+		if (key == GLFW_KEY_P && action == GLFW_PRESS)
+			rotateModelRight();
+	}
+
 	//process keyboard input
 	//source: https://learnopengl.com/Getting-started/Camera
 	void processInput(GLFWwindow * window)
@@ -1296,8 +1303,19 @@
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
 
-		//walk around
-		float cameraSpeed = 2.5 * deltaTime;
+		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+			currentStudent = 0;
+		if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+			currentStudent = 1;
+		if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+			currentStudent = 2;
+		if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+			currentStudent = 3;
+		if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+			currentStudent = 4;
+
+		//fly around
+		float cameraSpeed = 5 * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 			cameraPos = cameraPos + cameraSpeed * cameraFront;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
@@ -1307,3 +1325,60 @@
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 			cameraPos = cameraPos + glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	}
+
+	////scales up currentStudent by 0.1
+	void scaleModelUp()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::scale(studentMatrixArray[currentStudent], glm::vec3(1.1f, 1.1f, 1.1f));
+	}
+
+	//scales down currentStudent by 0.1
+	void scaleModelDown()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::scale(studentMatrixArray[currentStudent], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
+	}
+	
+	//moves the currentStudent 5 units to the left
+	void moveModelLeft()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(-5.0f, 0.0f, 0.0f));
+	}
+
+	//moves currentStudent 5 units to the right
+	void moveModelRight()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(5.0f, 0.0f, 0.0f));
+	}
+
+	//moves currentStudent 5 units up
+	void moveModelUp()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, 5.0f, 0.0f));
+	}
+
+	//moves currentStudent 5 units down
+	void moveModelDown()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, -5.0f, 0.0f));
+	}
+
+	//rotates currentStudent left
+	void rotateModelLeft()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::rotate(studentMatrixArray[currentStudent], glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+	
+	//rotates currentStudent right
+	void rotateModelRight()
+	{
+		if (currentStudent >= 0 && currentStudent <= 4)
+			studentMatrixArray[currentStudent] = glm::rotate(studentMatrixArray[currentStudent], glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+
