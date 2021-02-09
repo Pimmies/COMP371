@@ -42,8 +42,9 @@
     void draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
     void drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    void drawLines(int shadreProgram, glm::vec3 translationMatrix);
 
-// screen size settings
+    // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
 
@@ -196,7 +197,32 @@
 			-0.5f,  0.5f,  0.5f,
 			-0.5f,  0.5f, -0.5f,
 		};
+        
+        float axisVertices[] = {
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f
+        };
+        
+        unsigned int VBOaxis, VAOaxis;
+        glGenVertexArrays(1, &VAOaxis); //stores VBO
+        glGenBuffers(1, &VBOaxis); //stores vertices
 
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAOaxis);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBOaxis);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(axisVertices), axisVertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+        glEnableVertexAttribArray(0);
+
+        //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));  //tells gpu how to interpret texture
+        //glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
 		//SETTING VERTEX ATTRIBUTES
 		unsigned int VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO); //stores VBO
@@ -242,13 +268,16 @@
 			//pass updated settings to the shader
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
+            
+            glBindVertexArray(VAOaxis);
+            drawLines(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
+            
+            glBindVertexArray(VAO);
 			drawJulie(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
 			drawClaudia(shaderProgram, glm::vec3(0.0f, 5.0f, 0.0f));
 			drawCamil(shaderProgram, glm::vec3(0.0f, 10.0f, 0.0f));
 			drawCharles(shaderProgram, glm::vec3(0.0f, -5.0f, 0.0f));
             drawMax(shaderProgram, glm::vec3(0.0f, -10.0f, 0.0f));
-            
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
@@ -262,6 +291,48 @@
 		return 0;
 	}
 
+    void drawLines(int shaderProgram, glm::vec3 translationMatrix){
+        
+        
+        glm::mat4 axisMatrix = glm::mat4(1.0f);
+        axisMatrix = glm::translate(axisMatrix, translationMatrix); //translationMatrix is applied to the axisMatrix
+        
+        glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
+       
+        //x-axis
+        transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(5.0f, 0.0f, 0.0f));
+        glm::mat4 worldMatrix = glm::mat4(1.0f);
+        worldMatrix = axisMatrix * transform;
+        unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glDrawArrays(GL_LINES, 0, 2);
+        
+        //y axis
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.0f, 5.0f, 0.0f));
+
+        //update uniform location world matrix
+        worldMatrix = glm::mat4(1.0f);
+        worldMatrix = axisMatrix * transform;
+
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glDrawArrays(GL_LINES, 0, 2); //draw line
+        
+        //z axis
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+        transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, 5.0f));
+        
+        worldMatrix = glm::mat4(1.0f);
+        worldMatrix = axisMatrix * transform;
+        
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glDrawArrays(GL_LINES, 0, 2);
+    }
+    
 	//translationMatrix: this matrix gets applied to the studentMatrix. This in turn allows to move the group of letters around
 	void drawJulie(int shaderProgram, glm::vec3 translationMatrix)
 	{
@@ -1307,3 +1378,4 @@
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 			cameraPos = cameraPos + glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 	}
+
