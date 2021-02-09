@@ -313,8 +313,7 @@
     void drawLines(int shaderProgram){
         
         //worldMatrix = position of lines in world
-		glm::mat4 transform = glm::mat4(1.0f);
-		glm::mat4 worldMatrix = transform;
+		glm::mat4 worldMatrix = glm::mat4(1.0f);
 
 		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
@@ -490,7 +489,7 @@
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-
+        
 		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 			currentStudent = 0;
 		if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
@@ -501,7 +500,10 @@
 			currentStudent = 3;
 		if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
 			currentStudent = 4;
-
+        if(glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS
+           || glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS){
+            currentStudent = -1;
+        }
 		//fly around
 		float cameraSpeed = 5 * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
@@ -528,6 +530,8 @@
 			studentMatrixArray[currentStudent] = glm::scale(studentMatrixArray[currentStudent], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
 	}
 	
+
+
 	//moves the currentStudent 5 units to the left
 	void moveModelLeft()
 	{
