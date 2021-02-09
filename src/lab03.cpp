@@ -37,7 +37,7 @@
     void drawClaudia(int shaderProgram, glm::mat4 studentMatrix);
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix);
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix);
-    void drawLines(int shadreProgram);
+    void drawLines(int shaderProgram);
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -286,7 +286,11 @@
 			//pass updated settings to the shader
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
+            
+            glBindVertexArray(VAO_axis);
+            drawLines(shaderProgram);
+            
+            glBindVertexArray(VAO_cube);
 			drawJulie(shaderProgram, studentMatrixArray[0]);
 			drawClaudia(shaderProgram, studentMatrixArray[1]);
 			drawCamil(shaderProgram, studentMatrixArray[2]);
