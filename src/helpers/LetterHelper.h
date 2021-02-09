@@ -1,0 +1,33 @@
+//
+// Created by Max Sun on 2/7/21.
+//
+
+#ifndef LAB_3_LETTERHELPER_H
+#define LAB_3_LETTERHELPER_H
+
+#include <stdio.h>
+#include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
+#include <glm/gtc/matrix_transform.hpp> // include this to create transformation matrices
+#include <glm/common.hpp>
+#include <glm/gtc/type_ptr.hpp>
+// cross-platform interface for creating a graphical context,
+
+class LetterHelper{
+public:
+    static void drawJ(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawP(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void draw4(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void draw5(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawC(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawG(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawR(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void draw2(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void draw9(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawB(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void draw1(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+};
+
+#endif //LAB_3_LETTERHELPER_H
