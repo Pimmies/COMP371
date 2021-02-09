@@ -94,6 +94,8 @@
 		"   FragColor = vec4(ourColor, 1.0);\n"
 		"}";
 
+
+
 	int main()
 	{
 		//INITIALIZE GLFW
@@ -156,7 +158,37 @@
 		// tell GLFW to capture our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE); //sticky mouse button enabled so that press and release are captured
-        
+
+		//Vertices for circle
+		GLfloat radius = 4;
+		GLint numberOfSides = 36;
+        GLint numberOfVertices = numberOfSides + 1;
+
+        GLfloat doublePi = 2.0f * M_PI;
+
+        float circleVerticesX[numberOfVertices];
+        float circleVerticesY[numberOfVertices];
+        float circleVerticesZ[numberOfVertices];
+
+        //circleVerticesX[0] = x;
+        //circleVerticesY[0] = y;
+        //circleVerticesZ[0] = z;
+
+        for ( int i = 0; i < numberOfVertices; i++ )
+        {
+            circleVerticesX[i] = SCR_HEIGHT/2 + ( radius * cos( i * doublePi / numberOfSides ) );
+            circleVerticesY[i] = SCR_WIDTH/2 + ( radius * sin( i * doublePi / numberOfSides ) );
+            circleVerticesZ[i] = 0;
+        }
+
+        float allCircleVertices[numberOfVertices * 3];
+
+        for ( int i = 0; i < numberOfVertices; i++ )
+        {
+            allCircleVertices[i * 3] = circleVerticesX[i];
+            allCircleVertices[( i * 3 ) + 1] = circleVerticesY[i];
+            allCircleVertices[( i * 3 ) + 2] = circleVerticesZ[i];
+        }
 		//VERTICES FOR A CUBE
 		float vertices[] = {
 			//position				//colour
@@ -214,7 +246,7 @@
 		};
         
 		//SETTING VERTEX ATTRIBUTES
-		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis;
+		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle;
 		
 		//VAO of cube
 		glGenVertexArrays(1, &VAO_cube);
@@ -250,6 +282,18 @@
 		glEnableVertexAttribArray(1);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        //VAO of circle
+        glGenVertexArrays(1, &VAO_circle);
+        glGenBuffers(1, &VBO_cirle); //stores vertices of cube
+
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAO_circle);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_cirle);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(allCircleVertices), allCircleVertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+        glEnableVertexAttribArray(0);
 
 		//initial placement of students in world
 		for (int i = 0; i < 5; i++)
@@ -289,6 +333,13 @@
             
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
+
+            glm::mat4 worldMatrix = glm::mat4(1.0f);
+
+            unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
+            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            glBindVertexArray(VAO_circle);
+            glDrawArrays( GL_TRIANGLE_FAN, 0, 37*3);
             
             glBindVertexArray(VAO_cube);
 			drawJulie(shaderProgram, studentMatrixArray[0]);
