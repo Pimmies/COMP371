@@ -37,6 +37,8 @@
     void drawClaudia(int shaderProgram, glm::mat4 studentMatrix);
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix);
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix);
+    void drawLines(int shadreProgram);
+
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
@@ -73,19 +75,23 @@
 	//projection     *           view             *           studentMatrix                *                             letterMatrix                       *       transform
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec3 aColor;\n"
 		"uniform mat4 worldMatrix;\n"
 		"uniform mat4 view;\n"
 		"uniform mat4 projection;\n"
+		"out vec3 ourColor;\n"
 		"void main()\n"
 		"{\n"
 		"   gl_Position = projection * view * worldMatrix * vec4(aPos, 1.0);\n"
+		"	ourColor = aColor;\n"
 		"}";
 
 	const char* fragmentShaderSource = "#version 330 core\n"
+		"in vec3 ourColor;\n"
 		"out vec4 FragColor;\n"
 		"void main()\n"
 		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"   FragColor = vec4(ourColor, 1.0);\n"
 		"}";
 
 	int main()
@@ -153,63 +159,95 @@
         
 		//VERTICES FOR A CUBE
 		float vertices[] = {
-			//position
-			-0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			-0.5f,  0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
+			//position				//colour
+			-0.5f, -0.5f, -0.5f, 0.796f, 0.282f, 0.282f, //light red
+			 0.5f, -0.5f, -0.5f, 0.796f, 0.282f, 0.282f,
+			 0.5f,  0.5f, -0.5f, 0.796f, 0.282f, 0.282f,
+			 0.5f,  0.5f, -0.5f, 0.796f, 0.282f, 0.282f,
+			-0.5f,  0.5f, -0.5f, 0.796f, 0.282f, 0.282f,
+			-0.5f, -0.5f, -0.5f, 0.796f, 0.282f, 0.282f,
 
-			-0.5f, -0.5f,  0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f, -0.5f,  0.5f,
+			-0.5f, -0.5f,  0.5f, 0.796f, 0.282f, 0.780f, //light pinkish-purple
+			 0.5f, -0.5f,  0.5f, 0.796f, 0.282f, 0.780f,
+			 0.5f,  0.5f,  0.5f, 0.796f, 0.282f, 0.780f,
+			 0.5f,  0.5f,  0.5f, 0.796f, 0.282f, 0.780f,
+			-0.5f,  0.5f,  0.5f, 0.796f, 0.282f, 0.780f,
+			-0.5f, -0.5f,  0.5f, 0.796f, 0.282f, 0.780f,
 
-			-0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
+			-0.5f,  0.5f,  0.5f, 0.282f, 0.654f, 0.796f,  //light blue
+			-0.5f,  0.5f, -0.5f, 0.282f, 0.654f, 0.796f,
+			-0.5f, -0.5f, -0.5f, 0.282f, 0.654f, 0.796f,
+			-0.5f, -0.5f, -0.5f, 0.282f, 0.654f, 0.796f,
+			-0.5f, -0.5f,  0.5f, 0.282f, 0.654f, 0.796f,
+			-0.5f,  0.5f,  0.5f, 0.282f, 0.654f, 0.796f,
 
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
+			 0.5f,  0.5f,  0.5f, 0.282f, 0.796f, 0.498f,  //light green
+			 0.5f,  0.5f, -0.5f, 0.282f, 0.796f, 0.498f,
+			 0.5f, -0.5f, -0.5f, 0.282f, 0.796f, 0.498f,
+			 0.5f, -0.5f, -0.5f, 0.282f, 0.796f, 0.498f,
+			 0.5f, -0.5f,  0.5f, 0.282f, 0.796f, 0.498f,
+			 0.5f,  0.5f,  0.5f, 0.282f, 0.796f, 0.498f,
 
-			-0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f, -0.5f,  0.5f,
-			-0.5f, -0.5f,  0.5f,
-			-0.5f, -0.5f, -0.5f,
+			-0.5f, -0.5f, -0.5f, 0.882f, 0.878f, 0.419f, //light yellow
+			 0.5f, -0.5f, -0.5f, 0.882f, 0.878f, 0.419f,
+			 0.5f, -0.5f,  0.5f, 0.882f, 0.878f, 0.419f,
+			 0.5f, -0.5f,  0.5f, 0.882f, 0.878f, 0.419f,
+			-0.5f, -0.5f,  0.5f, 0.882f, 0.878f, 0.419f,
+			-0.5f, -0.5f, -0.5f, 0.882f, 0.878f, 0.419f,
 
-			-0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f, -0.5f,
+			-0.5f,  0.5f, -0.5f, 0.980f, 0.529f, 0.160f,  //orange
+			 0.5f,  0.5f, -0.5f, 0.980f, 0.529f, 0.160f,
+			 0.5f,  0.5f,  0.5f, 0.980f, 0.529f, 0.160f,
+			 0.5f,  0.5f,  0.5f, 0.980f, 0.529f, 0.160f,
+			-0.5f,  0.5f,  0.5f, 0.980f, 0.529f, 0.160f,
+			-0.5f,  0.5f, -0.5f, 0.980f, 0.529f, 0.160f,
 		};
-
+        
+		float axisVertices[] = {
+			//coordinate		colours
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+			7.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 7.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
+		};
+        
 		//SETTING VERTEX ATTRIBUTES
-		unsigned int VBO, VAO, EBO;
-		glGenVertexArrays(1, &VAO); //stores VBO
-		glGenBuffers(1, &VBO); //stores vertices
+		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis;
+		
+		//VAO of cube
+		glGenVertexArrays(1, &VAO_cube);
+		glGenBuffers(1, &VBO_cube); //stores vertices of cube
 
 		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		glBindVertexArray(VAO);
+		glBindVertexArray(VAO_cube);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));   //interpret the colours
 		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		
+		//VAO of axis
+		glGenVertexArrays(1, &VAO_axis);
+		glGenBuffers(1, &VBO_axis); //stores vertices of cube
+
+		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+		glBindVertexArray(VAO_axis);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_axis);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(axisVertices), axisVertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));   //interpret the colours
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -260,14 +298,26 @@
 		}
 
 		//de-allocate all resources
-		glDeleteVertexArrays(1, &VAO);
-		glDeleteBuffers(1, &VBO);
+		/*glDeleteVertexArrays(1, &VAO);
+		glDeleteBuffers(1, &VBO);*/
 		glDeleteProgram(shaderProgram);
 
 		glfwTerminate();
 		return 0;
 	}
 
+    void drawLines(int shaderProgram){
+        
+        //worldMatrix = position of lines in world
+		glm::mat4 transform = glm::mat4(1.0f);
+		glm::mat4 worldMatrix = transform;
+
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
+		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+
+		glDrawArrays(GL_LINES, 0, 6);
+    }
+    
 	void drawJulie(int shaderProgram, glm::mat4 studentMatrix)
 	{
 		//draw letters
