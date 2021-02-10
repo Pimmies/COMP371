@@ -8,7 +8,6 @@
 
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
-
 #include <GLFW/glfw3.h> // cross-platform interface for creating a graphical context,
                         // initializing OpenGL and binding inputs
 
@@ -18,7 +17,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "helpers/LetterHelper.h"
 
-	//declare our functions
+//declare our functions
 	void framebuffer_size_callback(GLFWwindow * window, int width, int height);
 	void processInput(GLFWwindow * window);
 	void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
@@ -32,6 +31,7 @@
 	void moveModelDown();
 	void rotateModelLeft();
 	void rotateModelRight();
+	void processPolygonMode(GLFWwindow* window);
 	void drawCamil(int shaderProgram, glm::mat4 studentMatrix);
 	void drawJulie(int shaderProgram, glm::mat4 studentMatrix);
     void drawClaudia(int shaderProgram, glm::mat4 studentMatrix);
@@ -39,15 +39,21 @@
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix);
     void drawLines(int shaderProgram);
 	void drawCircle(int shaderProgram);
+    void drawGrid(int shaderProgram, glm::vec3 translationMatrix);
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
 
 	// camera
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+//	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+//	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// camera position to see axis (testing)
+    glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 5.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//selected student
 	//0:Julie 1:Claudia 2:Camil 3:Charles 4:Max
@@ -94,8 +100,6 @@
 		"{\n"
 		"   FragColor = vec4(ourColor, 1.0);\n"
 		"}";
-
-
 
 	int main()
 	{
@@ -159,7 +163,6 @@
 		// tell GLFW to capture our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE); //sticky mouse button enabled so that press and release are captured
-
 
 		//VERTICES FOR A CUBE
 		float vertices[] = {
@@ -240,10 +243,15 @@
 			angle = (float)(angle + (360.0f / numPoints));
 		}
         
-		//SETTING VERTEX ATTRIBUTES
-		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle;
-		
-		//VAO OF CUBE
+        float gridVertices[] = {
+            0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        //SETTING VERTEX ATTRIBUTES
+        unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid;
 		glGenVertexArrays(1, &VAO_cube);
 		glGenBuffers(1, &VBO_cube); //stores vertices of cube
 		glBindVertexArray(VAO_cube);
@@ -259,7 +267,7 @@
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		
-		//VAO OF AXIS
+		//VAO of axis
 		glGenVertexArrays(1, &VAO_axis);
 		glGenBuffers(1, &VBO_axis); //stores vertices of cube
 
@@ -288,8 +296,26 @@
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		
-		//INITIAL PLACEMENT OF STUDENTS IN WORLD
+
+        //VAO of grid
+        glGenVertexArrays(1, &VAO_grid);
+        glGenBuffers(1, &VBO_grid); //stores vertices of cube
+
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAO_grid);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_grid);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(gridVertices), gridVertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));   //interpret the colours
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+		//initial placement of students in world
 		for (int i = 0; i < 5; i++)
 		{
 			studentMatrixArray[i] = glm::mat4(1.0f);
@@ -313,23 +339,26 @@
 			lastFrame = currentFrame;
 
 			processInput(window);
+			processPolygonMode(window);
 
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
+            view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
 			projection = glm::perspective(glm::radians(fieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f); //the perspective is updated every frame because the fieldOfView is dynamically changed by zooming
 
 			//pass updated settings to the shader
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+            glBindVertexArray(VAO_grid);
+            drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
             
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
 
             glBindVertexArray(VAO_circle);
 			drawCircle(shaderProgram);
-            
             glBindVertexArray(VAO_cube);
 			drawJulie(shaderProgram, studentMatrixArray[0]);
 			drawClaudia(shaderProgram, studentMatrixArray[1]);
@@ -349,6 +378,69 @@
 		glfwTerminate();
 		return 0;
 	}
+
+	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
+        const int AMOUNT_OF_LINES = 128;
+
+        glm::mat4 gridMatrix = glm::mat4(1.0f);
+        gridMatrix = glm::translate(gridMatrix, translationMatrix);
+
+        glm::mat4 transform = glm::mat4(1.0f);
+        glm::mat4 worldMatrix = glm::mat4(1.0f);
+        worldMatrix = gridMatrix * transform;
+        unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+
+        glDrawArrays(GL_LINES, 0, 2);
+
+        //parallel to z axis
+        for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
+            transform = glm::mat4(1.0f);
+
+            if(i < AMOUNT_OF_LINES/2) {
+                //move to the left of z axis (-x)
+                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -AMOUNT_OF_LINES/2));
+
+            } else if (i == AMOUNT_OF_LINES/2) {
+                //most left line (-x)
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
+
+            } else {
+                //move to the right of z axis (+x)
+                transform = glm::translate(transform, glm::vec3(i-(AMOUNT_OF_LINES/2), 0.0f, -AMOUNT_OF_LINES/2));
+            }
+
+            transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, AMOUNT_OF_LINES));
+
+            worldMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            glDrawArrays(GL_LINES, 0, 4);
+        }
+
+        //parallel to x axis
+        for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
+            transform = glm::mat4(1.0f);
+
+            if(i < AMOUNT_OF_LINES/2) {
+                //move after x axis (-z)
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -i));
+
+            } else if(i == AMOUNT_OF_LINES/2) {
+                //farthest (-z)
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
+
+            } else {
+                //move before x axis (+z)
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, i-AMOUNT_OF_LINES/2));
+            }
+
+            transform = glm::scale(transform, glm::vec3(AMOUNT_OF_LINES, 0.0f, 0.0f));
+
+            worldMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            glDrawArrays(GL_LINES, 0, 4);
+        }
+    }
 
     void drawLines(int shaderProgram){
         
@@ -529,10 +621,23 @@
 			scaleModelUp();
 		if (key == GLFW_KEY_J && action == GLFW_PRESS)
 			scaleModelDown();
-		if (key == GLFW_KEY_O && action == GLFW_PRESS)
+		if (key == GLFW_KEY_Q && action == GLFW_PRESS)
 			rotateModelLeft();
-		if (key == GLFW_KEY_P && action == GLFW_PRESS)
+		if (key == GLFW_KEY_E && action == GLFW_PRESS)
 			rotateModelRight();
+	}
+
+	//change polygon mode
+	//source: https://knowww.eu/nodes/59b8e93cd54a862e9d7e407c
+	void processPolygonMode(GLFWwindow* window)
+	{
+		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	}
 
 	//process keyboard input
