@@ -82,13 +82,13 @@
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
 		"layout (location = 1) in vec3 aColor;\n"
-		"uniform mat4 worldMatrix;\n"
+		"uniform mat4 modelMatrix;\n"
 		"uniform mat4 view;\n"
 		"uniform mat4 projection;\n"
 		"out vec3 ourColor;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = projection * view * worldMatrix * vec4(aPos, 1.0);\n"
+		"   gl_Position = projection * view * modelMatrix * vec4(aPos, 1.0);\n"
 		"	ourColor = aColor;\n"
 		"}";
 
@@ -353,10 +353,10 @@
         gridMatrix = glm::translate(gridMatrix, translationMatrix);
 
         glm::mat4 transform = glm::mat4(1.0f);
-        glm::mat4 worldMatrix = glm::mat4(1.0f);
-        worldMatrix = gridMatrix * transform;
-        unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        modelMatrix = gridMatrix * transform;
+        unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+        glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
         glDrawArrays(GL_LINES, 0, 2);
 
@@ -379,8 +379,8 @@
 
             transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, AMOUNT_OF_LINES));
 
-            worldMatrix = gridMatrix * transform;
-            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            modelMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
             glDrawArrays(GL_LINES, 0, 4);
         }
 
@@ -403,19 +403,19 @@
 
             transform = glm::scale(transform, glm::vec3(AMOUNT_OF_LINES, 0.0f, 0.0f));
 
-            worldMatrix = gridMatrix * transform;
-            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            modelMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
             glDrawArrays(GL_LINES, 0, 4);
         }
     }
 
     void drawLines(int shaderProgram){
         
-        //worldMatrix = position of lines in world
-		glm::mat4 worldMatrix = glm::mat4(1.0f);
+        //modelMatrix = position of lines in world
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 		glDrawArrays(GL_LINES, 0, 6);
     }
