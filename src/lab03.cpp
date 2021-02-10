@@ -38,6 +38,7 @@
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix);
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix);
     void drawLines(int shaderProgram);
+	void drawCircle(int shaderProgram);
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -159,36 +160,7 @@
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE); //sticky mouse button enabled so that press and release are captured
 
-		//Vertices for circle
-		GLfloat radius = 4;
-		GLint numberOfSides = 36;
-        GLint numberOfVertices = numberOfSides + 1;
 
-        GLfloat doublePi = 2.0f * M_PI;
-
-        float circleVerticesX[numberOfVertices];
-        float circleVerticesY[numberOfVertices];
-        float circleVerticesZ[numberOfVertices];
-
-        //circleVerticesX[0] = x;
-        //circleVerticesY[0] = y;
-        //circleVerticesZ[0] = z;
-
-        for ( int i = 0; i < numberOfVertices; i++ )
-        {
-            circleVerticesX[i] = SCR_HEIGHT/2 + ( radius * cos( i * doublePi / numberOfSides ) );
-            circleVerticesY[i] = SCR_WIDTH/2 + ( radius * sin( i * doublePi / numberOfSides ) );
-            circleVerticesZ[i] = 0;
-        }
-
-        float allCircleVertices[numberOfVertices * 3];
-
-        for ( int i = 0; i < numberOfVertices; i++ )
-        {
-            allCircleVertices[i * 3] = circleVerticesX[i];
-            allCircleVertices[( i * 3 ) + 1] = circleVerticesY[i];
-            allCircleVertices[( i * 3 ) + 2] = circleVerticesZ[i];
-        }
 		//VERTICES FOR A CUBE
 		float vertices[] = {
 			//position				//colour
@@ -244,15 +216,35 @@
 			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 			0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
 		};
+
+		//VERTICES FOR A CIRCLE
+		float x;
+		float y;
+		float z = 0.0f;
+		float angle = 0.0f;
+		float radius = 3.0f;
+		int currentIndex = 0;
+		int numPoints = 30;
+		float circleVertices[90];  //numPoints * 3
+
+		for (int i = 0; i < numPoints; i++)
+		{
+			x = (float)(radius * cos(glm::radians(angle)));
+			y = (float)(radius * sin(glm::radians(angle)));
+
+			circleVertices[i * 3] = x;
+			circleVertices[i * 3 + 1] = y;
+			circleVertices[i * 3 + 2] = z;
+
+			angle = (float)(angle + (360.0f / numPoints));
+		}
         
 		//SETTING VERTEX ATTRIBUTES
 		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle;
 		
-		//VAO of cube
+		//VAO OF CUBE
 		glGenVertexArrays(1, &VAO_cube);
 		glGenBuffers(1, &VBO_cube); //stores vertices of cube
-
-		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 		glBindVertexArray(VAO_cube);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
@@ -266,11 +258,10 @@
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		
-		//VAO of axis
+		//VAO OF AXIS
 		glGenVertexArrays(1, &VAO_axis);
 		glGenBuffers(1, &VBO_axis); //stores vertices of cube
 
-		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 		glBindVertexArray(VAO_axis);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_axis);
@@ -283,27 +274,28 @@
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        //VAO of circle
+        //VAO OF CIRCLE
         glGenVertexArrays(1, &VAO_circle);
         glGenBuffers(1, &VBO_cirle); //stores vertices of cube
 
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
         glBindVertexArray(VAO_circle);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO_cirle);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(allCircleVertices), allCircleVertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(circleVertices), circleVertices, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
         glEnableVertexAttribArray(0);
 
-		//initial placement of students in world
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		
+		//INITIAL PLACEMENT OF STUDENTS IN WORLD
 		for (int i = 0; i < 5; i++)
 		{
 			studentMatrixArray[i] = glm::mat4(1.0f);
 			studentMatrixArray[i] = glm::translate(studentMatrixArray[i], glm::vec3(0.0f, 0.0f, (float)(i * -5)));
 		}
 
-		//studentMatrixArray[0] = glm::translate(studentMatrixArray[0], glm::vec3(-5.0f, 0.0f, 0.0f));
-
+		
 		glm::mat4 view; //updated in render loop
 		glm::mat4 projection; //updated in render loop
 
@@ -334,12 +326,8 @@
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
 
-            glm::mat4 worldMatrix = glm::mat4(1.0f);
-
-            unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
             glBindVertexArray(VAO_circle);
-            glDrawArrays( GL_TRIANGLE_FAN, 0, 37*3);
+			drawCircle(shaderProgram);
             
             glBindVertexArray(VAO_cube);
 			drawJulie(shaderProgram, studentMatrixArray[0]);
@@ -371,6 +359,17 @@
 
 		glDrawArrays(GL_LINES, 0, 6);
     }
+
+	void drawCircle(int shaderProgram)
+	{
+		//worldMatrix = position of lines in world
+		glm::mat4 worldMatrix = glm::mat4(1.0f);
+
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
+		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+	}
     
 	void drawJulie(int shaderProgram, glm::mat4 studentMatrix)
 	{
