@@ -17,6 +17,11 @@ U = scale selected model up
 J = scale selected model down
 Q = rotate selected model left
 E = rotate selected model right
+B = rotate world +x axis (anticlockwise)
+M = rotate world -x axis (anticlockwise)
+N = rotate world down around y-axis
+H = rotate world up around y-axis
+0 = reset world rotation
 Escape key = exit the application
 
 
