@@ -32,6 +32,7 @@
 	void moveModelDown();
 	void rotateModelLeft();
 	void rotateModelRight();
+	void processPolygonMode(GLFWwindow* window);
 	void drawCamil(int shaderProgram, glm::mat4 studentMatrix);
 	void drawJulie(int shaderProgram, glm::mat4 studentMatrix);
     void drawClaudia(int shaderProgram, glm::mat4 studentMatrix);
@@ -308,6 +309,7 @@
 			lastFrame = currentFrame;
 
 			processInput(window);
+			processPolygonMode(window);
 
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -574,10 +576,23 @@
 			scaleModelUp();
 		if (key == GLFW_KEY_J && action == GLFW_PRESS)
 			scaleModelDown();
-		if (key == GLFW_KEY_O && action == GLFW_PRESS)
+		if (key == GLFW_KEY_Q && action == GLFW_PRESS)
 			rotateModelLeft();
-		if (key == GLFW_KEY_P && action == GLFW_PRESS)
+		if (key == GLFW_KEY_E && action == GLFW_PRESS)
 			rotateModelRight();
+	}
+
+	//change polygon mode
+	//source: https://knowww.eu/nodes/59b8e93cd54a862e9d7e407c
+	void processPolygonMode(GLFWwindow* window)
+	{
+		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	}
 
 	//process keyboard input

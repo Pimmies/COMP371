@@ -5,6 +5,9 @@ Right click + move cursor along x-axis = pan
 Middle click + move cursor along y-axis = tilt
 Left click + move cursor along y-axis = zoom
 Direction arrows = "fly" around
+P = Render models as points
+L = Render models as lines
+T = Render models as filled triangles
 Keys 1-5 = select a model
 W = move selected model up
 A = move selected model left
@@ -12,8 +15,8 @@ S = move selected model down
 D = move selected model right
 U = scale selected model up
 J = scale selected model down
-O = rotate selected model left
-P = rotate selected model right
+Q = rotate selected model left
+E = rotate selected model right
 Escape key = exit the application
 
 
