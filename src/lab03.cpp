@@ -45,9 +45,14 @@
 	const unsigned int SCR_HEIGHT = 768;
 
 	// camera
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+//	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+//	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// camera position to see axis (testing)
+    glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 5.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//selected student
 	//0:Julie 1:Claudia 2:Camil 3:Charles 4:Max
@@ -213,9 +218,16 @@
 			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 			0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
 		};
+
+        float gridVertices[] = {
+            0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
+        };
         
 		//SETTING VERTEX ATTRIBUTES
-		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis;
+		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_grid, VBO_grid;
 		
 		//VAO of cube
 		glGenVertexArrays(1, &VAO_cube);
@@ -252,6 +264,25 @@
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+
+        //VAO of grid
+        glGenVertexArrays(1, &VAO_grid);
+        glGenBuffers(1, &VBO_grid); //stores vertices of cube
+
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAO_grid);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_grid);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(gridVertices), gridVertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));   //interpret the colours
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
 		//initial placement of students in world
 		for (int i = 0; i < 5; i++)
 		{
@@ -287,10 +318,13 @@
 			//pass updated settings to the shader
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+            glBindVertexArray(VAO_grid);
+            drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
             
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
-            
+
             glBindVertexArray(VAO_cube);
 			drawJulie(shaderProgram, studentMatrixArray[0]);
 			drawClaudia(shaderProgram, studentMatrixArray[1]);
@@ -312,32 +346,65 @@
 	}
 
 	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
-        glm::mat4 gridMatrix = glm::mat4(1.0f); //the studentMatrix is originally the identity matrix. That's why we apply transformations onto it
-        gridMatrix = glm::translate(gridMatrix, translationMatrix); //translationMatrix is applied to the studentMatrix
+
+        glm::mat4 gridMatrix = glm::mat4(1.0f);
+        gridMatrix = glm::translate(gridMatrix, translationMatrix);
+
+        glm::mat4 transform = glm::mat4(1.0f);
+        glm::mat4 worldMatrix = glm::mat4(1.0f);
+        worldMatrix = gridMatrix * transform;
         unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(gridMatrix));
+        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
-        int i;
-        for(i = 0; i <= 40; i++) {
+        glDrawArrays(GL_LINES, 0, 2);
 
-            glPushMatrix();
-            if (i<20) {
-                glTranslatef(0, i, 0);
+        //parallel to z axis
+        for(int i = 0; i <= 20; i++) {
+            transform = glm::mat4(1.0f);
+
+            if(i < 10) {
+                //move to the left of z axis (-x)
+                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -10.0f));
+
+            } else if (i == 10) {
+                //most left line (-x)
+                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, -10.0f));
 
             } else {
-                glTranslatef(i-20, 0, 0);
-                glRotatef(-90, 0, 1, 0);
+                //move to the right of z axis (+x)
+                transform = glm::translate(transform, glm::vec3(i-10, 0.0f, -10.0f));
             }
 
-            glBegin(GL_LINES);
-                glColor3f(1,1,1);
-                glLineWidth(2);
-                glVertex3f(0, -0.1,0);
-                glVertex3f(19, -0.1, 0);
-            glEnd();
-            glPopMatrix();
+            transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, 20.0f));
+
+            worldMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            glDrawArrays(GL_LINES, 0, 4);
         }
-        glDrawArrays(GL_LINES, 0, 36);
+
+        //parallel to x axis
+        for(int i = 0; i <= 20; i++) {
+            transform = glm::mat4(1.0f);
+
+            if(i < 10) {
+                //move after x axis (-z)
+                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, -i));
+
+            } else if(i == 10) {
+                //farthest (-z)
+                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, -10.0f));
+
+            } else {
+                //move before x axis (+z)
+                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, i-10));
+            }
+
+            transform = glm::scale(transform, glm::vec3(20.0f, 0.0f, 0.0f));
+
+            worldMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            glDrawArrays(GL_LINES, 0, 4);
+        }
     }
 
     void drawLines(int shaderProgram){
