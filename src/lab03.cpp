@@ -223,7 +223,7 @@
 		float y;
 		float z = 0.0f;
 		float angle = 0.0f;
-		float radius = 3.0f;
+		float radius = 15.0f;
 		int currentIndex = 0;
 		int numPoints = 30;
 		float circleVertices[90];  //numPoints * 3
@@ -364,11 +364,12 @@
 	void drawCircle(int shaderProgram)
 	{
 		//worldMatrix = position of lines in world
-		glm::mat4 worldMatrix = glm::mat4(1.0f);
-
+        glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
+        transform = glm::mat4(1.0f); //important! transform matrix need to be set back to a clean state (identity matrix) because we are transforming a new cube!
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); //second rotate
+        glm::mat4 worldMatrix = transform * glm::mat4(1.0f);
 		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
-
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
 	}
     
