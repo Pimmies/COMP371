@@ -16,7 +16,6 @@
 #include <glm/common.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "helpers/LetterHelper.h"
-#include <vector>
 
 //declare our functions
 	void framebuffer_size_callback(GLFWwindow * window, int width, int height);
@@ -348,6 +347,7 @@
 	}
 
 	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
+        const int AMOUNT_OF_LINES = 128;
 
         glm::mat4 gridMatrix = glm::mat4(1.0f);
         gridMatrix = glm::translate(gridMatrix, translationMatrix);
@@ -359,7 +359,6 @@
         glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
         glDrawArrays(GL_LINES, 0, 2);
-        const int AMOUNT_OF_LINES = 128;
 
         //parallel to z axis
         for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
