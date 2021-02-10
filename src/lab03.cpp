@@ -357,25 +357,26 @@
         glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
         glDrawArrays(GL_LINES, 0, 2);
+        const int AMOUNT_OF_LINES = 128;
 
         //parallel to z axis
-        for(int i = 0; i <= 20; i++) {
+        for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
             transform = glm::mat4(1.0f);
 
-            if(i < 10) {
+            if(i < AMOUNT_OF_LINES/2) {
                 //move to the left of z axis (-x)
-                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -10.0f));
+                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -AMOUNT_OF_LINES/2));
 
-            } else if (i == 10) {
+            } else if (i == AMOUNT_OF_LINES/2) {
                 //most left line (-x)
-                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, -10.0f));
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
 
             } else {
                 //move to the right of z axis (+x)
-                transform = glm::translate(transform, glm::vec3(i-10, 0.0f, -10.0f));
+                transform = glm::translate(transform, glm::vec3(i-(AMOUNT_OF_LINES/2), 0.0f, -AMOUNT_OF_LINES/2));
             }
 
-            transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, 20.0f));
+            transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, AMOUNT_OF_LINES));
 
             worldMatrix = gridMatrix * transform;
             glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
@@ -383,23 +384,23 @@
         }
 
         //parallel to x axis
-        for(int i = 0; i <= 20; i++) {
+        for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
             transform = glm::mat4(1.0f);
 
-            if(i < 10) {
+            if(i < AMOUNT_OF_LINES/2) {
                 //move after x axis (-z)
-                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, -i));
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -i));
 
-            } else if(i == 10) {
+            } else if(i == AMOUNT_OF_LINES/2) {
                 //farthest (-z)
-                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, -10.0f));
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
 
             } else {
                 //move before x axis (+z)
-                transform = glm::translate(transform, glm::vec3(-10.0f, 0.0f, i-10));
+                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, i-AMOUNT_OF_LINES/2));
             }
 
-            transform = glm::scale(transform, glm::vec3(20.0f, 0.0f, 0.0f));
+            transform = glm::scale(transform, glm::vec3(AMOUNT_OF_LINES, 0.0f, 0.0f));
 
             worldMatrix = gridMatrix * transform;
             glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
