@@ -218,6 +218,7 @@
 		};
 
 		//VERTICES FOR A CIRCLE
+		//helper source: https://stackoverflow.com/questions/32443776/drawing-a-circle-with-opengl
 		float x;
 		float y;
 		float z = 0.0f;
