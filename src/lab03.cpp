@@ -316,10 +316,19 @@
 
 
 		//initial placement of students in world
+		//first one stay at the center;
+		glm::vec3 translationArray[5] = {
+		        glm::vec3(0.0f, 1.2f, 0.0f),
+		        glm::vec3(- radius, 1.2f, 0.0f),
+		        glm::vec3(0.0f, 1.2f, radius),
+		        glm::vec3( radius, 1.2f,0.0f),
+		        glm::vec3( 0.0f,1.2f,-radius)
+		};
 		for (int i = 0; i < 5; i++)
 		{
 			studentMatrixArray[i] = glm::mat4(1.0f);
-			studentMatrixArray[i] = glm::translate(studentMatrixArray[i], glm::vec3(0.0f, 0.0f, (float)(i * -5)));
+			studentMatrixArray[i] = glm::translate(studentMatrixArray[i], translationArray[i]);
+            studentMatrixArray[i] = glm::rotate(studentMatrixArray[i], glm::radians(90.0f*i), glm::vec3(0.0f, 1.0f, 0.0f));
 		}
 
 		
