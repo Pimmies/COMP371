@@ -10,11 +10,8 @@
 #include <GLFW/glfw3.h>
 
 //translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
-void LetterHelper::drawB(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawB(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f); //the letterMatrix is originally the identity matrix.
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube: long one
     glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
     transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 0.5f)); //scale it
@@ -93,11 +90,8 @@ void LetterHelper::drawB(int shaderProgram, glm::vec3 translationMatrix, glm::ma
 }
 
 //translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
-void LetterHelper::drawJ(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawJ(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f); //the letterMatrix is originally the identity matrix. That's why we apply transformations onto it
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube
     //the transform matrix transforms an individual cube
     glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
@@ -151,11 +145,8 @@ void LetterHelper::drawJ(int shaderProgram, glm::vec3 translationMatrix, glm::ma
 }
 
 //translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
-void LetterHelper::drawP(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawP(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
@@ -208,11 +199,8 @@ void LetterHelper::drawP(int shaderProgram, glm::vec3 translationMatrix, glm::ma
 }
 
 //translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
-void LetterHelper::draw1(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::draw1(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f); //the letterMatrix is originally the identity matrix.
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube: long vertical
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 0.5f));
@@ -265,11 +253,8 @@ void LetterHelper::draw1(int shaderProgram, glm::vec3 translationMatrix, glm::ma
 }
 
 //translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
-void LetterHelper::draw4(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::draw4(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::scale(transform, glm::vec3(0.5f, 3.0f, 1.0f));
@@ -310,11 +295,8 @@ void LetterHelper::draw4(int shaderProgram, glm::vec3 translationMatrix, glm::ma
 }
 
 //translationMatrix: this matrix gets applied to the letterMatrix. This in turn allows to move the group of cubes (a letter) around
-void LetterHelper::draw5(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::draw5(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
@@ -379,11 +361,8 @@ void LetterHelper::draw5(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::drawC(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawC(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
 //1st cube
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
@@ -424,10 +403,8 @@ void LetterHelper::drawC(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::drawG(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawG(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
 
 //1st cube - bottom (horizontal)
     glm::mat4 transform = glm::mat4(1.0f);
@@ -494,11 +471,8 @@ void LetterHelper::drawG(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::draw2(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::draw2(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube - bottom (horizontal)
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
@@ -559,11 +533,8 @@ void LetterHelper::draw2(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::draw9(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::draw9(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1 - top (horizontal)
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
@@ -615,11 +586,8 @@ void LetterHelper::draw9(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawN(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1 - middle (slash)
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(-0.3f, 0.0f, 0.0f));
@@ -657,11 +625,8 @@ void LetterHelper::drawN(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::drawS(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1st cube
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, 0.7f, 0.0f));
@@ -723,12 +688,8 @@ void LetterHelper::drawS(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void LetterHelper::draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix)
+void LetterHelper::draw3(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
 {
-
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
     //1 - top (horizontal)
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));
@@ -787,11 +748,7 @@ void LetterHelper::draw3(int shaderProgram, glm::vec3 translationMatrix, glm::ma
     glDrawArrays(GL_TRIANGLES, 0, 36);*/
 }
 
-void LetterHelper::drawR(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix){
-
-    glm::mat4 letterMatrix = glm::mat4(1.0f);
-    letterMatrix = glm::translate(letterMatrix, translationMatrix);
-
+void LetterHelper::drawR(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix){
     //1 - top (horizontal)
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.0f, 1.25f, 0.0f));

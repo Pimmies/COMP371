@@ -14,20 +14,20 @@
 
 class LetterHelper{
 public:
-    static void drawJ(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawP(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void draw4(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void draw5(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawC(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawG(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawR(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void draw2(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void draw9(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawB(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void draw1(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void draw3(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawN(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
-    static void drawS(int shaderProgram, glm::vec3 translationMatrix, glm::mat4 studentMatrix);
+    static void drawJ(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawP(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void draw4(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void draw5(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawC(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawG(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawR(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void draw2(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void draw9(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawB(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void draw1(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void draw3(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawN(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+    static void drawS(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
 };
 
 #endif //LAB_3_LETTERHELPER_H

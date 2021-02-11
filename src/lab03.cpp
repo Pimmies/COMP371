@@ -51,7 +51,7 @@
 //	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // camera position to see axis (testing)
-    glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 5.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 0.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -226,7 +226,7 @@
 		float y;
 		float z = 0.0f;
 		float angle = 0.0f;
-		float radius = 15.0f;
+		float radius = 9.0f;
 		int currentIndex = 0;
 		int numPoints = 30;
 		float circleVertices[90];  //numPoints * 3
@@ -467,47 +467,115 @@
     
 	void drawJulie(int shaderProgram, glm::mat4 studentMatrix)
 	{
+	    //Tilt
+	    //Generate the series of angles some how, together with the translation arguments
+	    //30,15,-15,-30
+	    //-4, -2, 1.6, 3.5
+	    //For Loop to generate each letterMatrix
+	    float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+	    glm::vec3 translationVectorArray[4] = {
+	            glm::vec3(-4.0f, 0.0f, 1.0f),
+	            glm::vec3(-2.0f, 0.0f, 0.0f),
+	            glm::vec3(2.0f, 0.0f, 0.0f),
+	            glm::vec3(4.0f, 0.0f, 1.0f)
+	    };
+	    glm::mat4 letterMatrixArray[4];
+	    for(int i = 0; i < 4; i++){
+            letterMatrixArray[i] = glm::mat4(1.0f);
+            letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+            letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
+	    }
 		//draw letters
-		LetterHelper::drawJ(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::drawP(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw5(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
+		LetterHelper::drawJ(shaderProgram, letterMatrixArray[0], studentMatrix);
+        LetterHelper::drawP(shaderProgram, letterMatrixArray[1], studentMatrix);
+        LetterHelper::draw4(shaderProgram, letterMatrixArray[2], studentMatrix);
+        LetterHelper::draw5(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix){
-
+        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+        glm::vec3 translationVectorArray[4] = {
+                glm::vec3(-4.0f, 0.0f, 1.0f),
+                glm::vec3(-2.0f, 0.0f, 0.0f),
+                glm::vec3(1.6f, 0.0f, 0.0f),
+                glm::vec3(3.5f, 0.0f, 1.0f)
+        };
+        glm::mat4 letterMatrixArray[4];
+        for(int i = 0; i < 4; i++){
+            letterMatrixArray[i] = glm::mat4(1.0f);
+            letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+            letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
         //draw letters
-        LetterHelper::drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
-        LetterHelper::drawR(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw3(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
+        LetterHelper::drawC(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+        LetterHelper::drawR(shaderProgram, letterMatrixArray[1], studentMatrix);
+        LetterHelper::draw4(shaderProgram, letterMatrixArray[2], studentMatrix);
+        LetterHelper::draw3(shaderProgram, letterMatrixArray[3], studentMatrix);
     }
 
 	void drawClaudia(int shaderProgram, glm::mat4 studentMatrix) {
-        
+        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+        glm::vec3 translationVectorArray[4] = {
+                glm::vec3(-4.0f, 0.0f, 1.0f),
+                glm::vec3(-2.0f, 0.0f, 0.0f),
+                glm::vec3(1.6f, 0.0f, 0.0f),
+                glm::vec3(3.5f, 0.0f, 1.0f)
+        };
+        glm::mat4 letterMatrixArray[4];
+        for(int i = 0; i < 4; i++){
+            letterMatrixArray[i] = glm::mat4(1.0f);
+            letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+            letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
         //draw letters
-        LetterHelper::drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::drawG(shaderProgram, glm::vec3(-2.0f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw2(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw9(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
+        LetterHelper::drawC(shaderProgram, letterMatrixArray[0], studentMatrix);
+        LetterHelper::drawG(shaderProgram, letterMatrixArray[1], studentMatrix);
+        LetterHelper::draw2(shaderProgram, letterMatrixArray[2], studentMatrix);
+        LetterHelper::draw9(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix)
 	{
+        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+        glm::vec3 translationVectorArray[4] = {
+                glm::vec3(-4.0f, 0.0f, 1.0f),
+                glm::vec3(-2.3f, 0.0f, 0.0f),
+                glm::vec3(1.6f, 0.0f, 0.0f),
+                glm::vec3(3.5f, 0.0f, 1.0f)
+        };
+        glm::mat4 letterMatrixArray[4];
+        for(int i = 0; i < 4; i++){
+            letterMatrixArray[i] = glm::mat4(1.0f);
+            letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+            letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
         //draw letters
-        LetterHelper::drawN(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
-        LetterHelper::drawS(shaderProgram, glm::vec3(-2.3f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw9(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
+        LetterHelper::drawN(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+        LetterHelper::drawS(shaderProgram, letterMatrixArray[1], studentMatrix);
+        LetterHelper::draw4(shaderProgram, letterMatrixArray[2], studentMatrix);
+        LetterHelper::draw9(shaderProgram, letterMatrixArray[3], studentMatrix);
     }
 
 	void drawCamil(int shaderProgram, glm::mat4 studentMatrix)
 	{
+        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+        glm::vec3 translationVectorArray[4] = {
+                glm::vec3(-4.0f, 0.0f, 1.0f),
+                glm::vec3(-2.5f, 0.0f, 0.0f),
+                glm::vec3(1.6f, 0.0f, 0.0f),
+                glm::vec3(3.5f, 0.0f, 1.0f)
+        };
+        glm::mat4 letterMatrixArray[4];
+        for(int i = 0; i < 4; i++){
+            letterMatrixArray[i] = glm::mat4(1.0f);
+            letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+            letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
 		//draw letters
-        LetterHelper::drawC(shaderProgram, glm::vec3(-4.0f, 0.0f, 0.0f), studentMatrix); //check this function for detailed explanation
-        LetterHelper::drawB(shaderProgram, glm::vec3(-2.5f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw4(shaderProgram, glm::vec3(1.6f, 0.0f, 0.0f), studentMatrix);
-        LetterHelper::draw1(shaderProgram, glm::vec3(3.5f, 0.0f, 0.0f), studentMatrix);
+        LetterHelper::drawC(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+        LetterHelper::drawB(shaderProgram, letterMatrixArray[1], studentMatrix);
+        LetterHelper::draw4(shaderProgram, letterMatrixArray[2], studentMatrix);
+        LetterHelper::draw1(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
 	//when the window size is changed, this function is called
