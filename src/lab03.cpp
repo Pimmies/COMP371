@@ -52,8 +52,8 @@
 //	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // camera position to see axis (testing)
-    glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 5.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 15.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, -1.0f, -4.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//selected student
@@ -331,7 +331,7 @@
 
             glBindVertexArray(VAO_grid);
             drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
-            
+
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
 
@@ -357,9 +357,11 @@
 
 	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
         const int AMOUNT_OF_LINES = 128;
+        const int LIMIT = AMOUNT_OF_LINES/2;
 
         glm::mat4 gridMatrix = glm::mat4(1.0f);
-        gridMatrix = glm::translate(gridMatrix, translationMatrix);
+        gridMatrix = glm::translate(gridMatrix, translationMatrix);                            // move matrix to origin
+        gridMatrix = glm::scale(gridMatrix, glm::vec3(0.25f, 0.25f, 0.25f));    // scale matrix down (1/4)
 
         glm::mat4 transform = glm::mat4(1.0f);
         glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -367,23 +369,23 @@
         unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
         glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-        glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_LINES, 0, 4);
 
         //parallel to z axis
         for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
             transform = glm::mat4(1.0f);
 
-            if(i < AMOUNT_OF_LINES/2) {
+            if(i < LIMIT) {
                 //move to the left of z axis (-x)
-                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -LIMIT));
 
-            } else if (i == AMOUNT_OF_LINES/2) {
+            } else if (i == LIMIT) {
                 //most left line (-x)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, -LIMIT));
 
             } else {
                 //move to the right of z axis (+x)
-                transform = glm::translate(transform, glm::vec3(i-(AMOUNT_OF_LINES/2), 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(i-LIMIT, 0.0f, -LIMIT));
             }
 
             transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, AMOUNT_OF_LINES));
@@ -397,17 +399,17 @@
         for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
             transform = glm::mat4(1.0f);
 
-            if(i < AMOUNT_OF_LINES/2) {
+            if(i < LIMIT) {
                 //move after x axis (-z)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -i));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, -i));
 
-            } else if(i == AMOUNT_OF_LINES/2) {
+            } else if(i == LIMIT) {
                 //farthest (-z)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, -LIMIT));
 
             } else {
                 //move before x axis (+z)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, i-AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, i-LIMIT));
             }
 
             transform = glm::scale(transform, glm::vec3(AMOUNT_OF_LINES, 0.0f, 0.0f));
