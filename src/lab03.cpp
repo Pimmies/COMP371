@@ -360,9 +360,8 @@
         const int LIMIT = AMOUNT_OF_LINES/2;
 
         glm::mat4 gridMatrix = glm::mat4(1.0f);
-        gridMatrix = glm::translate(gridMatrix, translationMatrix);
-        glm::vec3 scale = glm::vec3(0.25f, 0.25f, 0.25f);
-        gridMatrix = glm::scale(gridMatrix, scale);
+        gridMatrix = glm::translate(gridMatrix, translationMatrix);                            // move matrix to origin
+        gridMatrix = glm::scale(gridMatrix, glm::vec3(0.25f, 0.25f, 0.25f));    // scale matrix down (1/4)
 
         glm::mat4 transform = glm::mat4(1.0f);
         glm::mat4 modelMatrix = glm::mat4(1.0f);
