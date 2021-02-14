@@ -361,7 +361,7 @@
 
         glm::mat4 gridMatrix = glm::mat4(1.0f);
         gridMatrix = glm::translate(gridMatrix, translationMatrix);
-        glm::vec3 scale = glm::vec3(0.5f, 0.5f, 0.5f);
+        glm::vec3 scale = glm::vec3(0.25f, 0.25f, 0.25f);
         gridMatrix = glm::scale(gridMatrix, scale);
 
         glm::mat4 transform = glm::mat4(1.0f);
