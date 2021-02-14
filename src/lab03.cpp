@@ -331,7 +331,7 @@
 
             glBindVertexArray(VAO_grid);
             drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
-            
+
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
 
@@ -361,6 +361,8 @@
 
         glm::mat4 gridMatrix = glm::mat4(1.0f);
         gridMatrix = glm::translate(gridMatrix, translationMatrix);
+        glm::vec3 scale = glm::vec3(0.5f, 0.5f, 0.5f);
+        gridMatrix = glm::scale(gridMatrix, scale);
 
         glm::mat4 transform = glm::mat4(1.0f);
         glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -368,7 +370,7 @@
         unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
         glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-        glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_LINES, 0, 4);
 
         //parallel to z axis
         for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
