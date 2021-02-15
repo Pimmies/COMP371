@@ -31,6 +31,8 @@
 	void moveModelDown();
 	void rotateModelLeft();
 	void rotateModelRight();
+	void rotateWorldX(float dir);
+	void rotateWorldY(float dir);
 	void processPolygonMode(GLFWwindow* window);
 	void drawCamil(int shaderProgram, glm::mat4 studentMatrix);
 	void drawJulie(int shaderProgram, glm::mat4 studentMatrix);
@@ -51,14 +53,17 @@
 //	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // camera position to see axis (testing)
-    glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 0.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 3.0f, 15.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, -1.0f, -4.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//selected student
 	//0:Julie 1:Claudia 2:Camil 3:Charles 4:Max
 	int currentStudent = -1;
 	glm::mat4 studentMatrixArray[5];
+
+	//worldMatrix: used to rotate the world, but not the camera.
+	glm::mat4 worldMatrix;
 	
 	//user input settings
 	//panning (left right) and tilting (up down), zoom
@@ -83,13 +88,14 @@
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
 		"layout (location = 1) in vec3 aColor;\n"
+		"uniform mat4 modelMatrix;\n"
 		"uniform mat4 worldMatrix;\n"
 		"uniform mat4 view;\n"
 		"uniform mat4 projection;\n"
 		"out vec3 ourColor;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = projection * view * worldMatrix * vec4(aPos, 1.0);\n"
+		"   gl_Position = projection * view * worldMatrix * modelMatrix * vec4(aPos, 1.0);\n"
 		"	ourColor = aColor;\n"
 		"}";
 
@@ -330,11 +336,14 @@
             studentMatrixArray[i] = glm::rotate(studentMatrixArray[i], glm::radians(90.0f*i), glm::vec3(0.0f, 1.0f, 0.0f));
 		}
 
-		
+		//studentMatrixArray[0] = glm::translate(studentMatrixArray[0], glm::vec3(-5.0f, 0.0f, 0.0f));
+
+		worldMatrix = glm::mat4(1.0f); //update on render loop and on input
 		glm::mat4 view; //updated in render loop
 		glm::mat4 projection; //updated in render loop
 
 		//get uniform location for view and projection
+		unsigned int worldLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
 		unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
 
@@ -354,14 +363,15 @@
 
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
 			projection = glm::perspective(glm::radians(fieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f); //the perspective is updated every frame because the fieldOfView is dynamically changed by zooming
-
+			
 			//pass updated settings to the shader
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+			glUniformMatrix4fv(worldLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
             glBindVertexArray(VAO_grid);
             drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
-            
+
             glBindVertexArray(VAO_axis);
             drawLines(shaderProgram);
 
@@ -389,39 +399,41 @@
 
 	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
         const int AMOUNT_OF_LINES = 128;
+        const int LIMIT = AMOUNT_OF_LINES/2;
 
         glm::mat4 gridMatrix = glm::mat4(1.0f);
-        gridMatrix = glm::translate(gridMatrix, translationMatrix);
+        gridMatrix = glm::translate(gridMatrix, translationMatrix);                            // move matrix to origin
+        gridMatrix = glm::scale(gridMatrix, glm::vec3(0.25f, 0.25f, 0.25f));    // scale matrix down (1/4)
 
         glm::mat4 transform = glm::mat4(1.0f);
-        glm::mat4 worldMatrix = glm::mat4(1.0f);
-        worldMatrix = gridMatrix * transform;
-        unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-        glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        modelMatrix = gridMatrix * transform;
+        unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+        glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-        glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_LINES, 0, 4);
 
         //parallel to z axis
         for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
             transform = glm::mat4(1.0f);
 
-            if(i < AMOUNT_OF_LINES/2) {
+            if(i < LIMIT) {
                 //move to the left of z axis (-x)
-                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-i, 0.0f, -LIMIT));
 
-            } else if (i == AMOUNT_OF_LINES/2) {
+            } else if (i == LIMIT) {
                 //most left line (-x)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, -LIMIT));
 
             } else {
                 //move to the right of z axis (+x)
-                transform = glm::translate(transform, glm::vec3(i-(AMOUNT_OF_LINES/2), 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(i-LIMIT, 0.0f, -LIMIT));
             }
 
             transform = glm::scale(transform, glm::vec3(0.0f, 0.0f, AMOUNT_OF_LINES));
 
-            worldMatrix = gridMatrix * transform;
-            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            modelMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
             glDrawArrays(GL_LINES, 0, 4);
         }
 
@@ -429,34 +441,34 @@
         for(int i = 0; i <= AMOUNT_OF_LINES; i++) {
             transform = glm::mat4(1.0f);
 
-            if(i < AMOUNT_OF_LINES/2) {
+            if(i < LIMIT) {
                 //move after x axis (-z)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -i));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, -i));
 
-            } else if(i == AMOUNT_OF_LINES/2) {
+            } else if(i == LIMIT) {
                 //farthest (-z)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, -AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, -LIMIT));
 
             } else {
                 //move before x axis (+z)
-                transform = glm::translate(transform, glm::vec3(-AMOUNT_OF_LINES/2, 0.0f, i-AMOUNT_OF_LINES/2));
+                transform = glm::translate(transform, glm::vec3(-LIMIT, 0.0f, i-LIMIT));
             }
 
             transform = glm::scale(transform, glm::vec3(AMOUNT_OF_LINES, 0.0f, 0.0f));
 
-            worldMatrix = gridMatrix * transform;
-            glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+            modelMatrix = gridMatrix * transform;
+            glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
             glDrawArrays(GL_LINES, 0, 4);
         }
     }
 
     void drawLines(int shaderProgram){
         
-        //worldMatrix = position of lines in world
-		glm::mat4 worldMatrix = glm::mat4(1.0f);
+        //modelMatrix = position of lines in world
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+		unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 		glDrawArrays(GL_LINES, 0, 6);
     }
@@ -701,6 +713,20 @@
 			rotateModelLeft();
 		if (key == GLFW_KEY_E && action == GLFW_PRESS)
 			rotateModelRight();
+
+		//rotate world
+		if (key == GLFW_KEY_B && action == GLFW_PRESS)
+			rotateWorldX(+1.0f);
+		if (key == GLFW_KEY_M && action == GLFW_PRESS)
+			rotateWorldX(-1.0f);
+		if (key == GLFW_KEY_N && action == GLFW_PRESS)
+			rotateWorldY(-1.0f);
+		if (key == GLFW_KEY_H && action == GLFW_PRESS)
+			rotateWorldY(1.0f);
+		if (key == GLFW_KEY_R && action == GLFW_PRESS)
+			//Home button: resets the world
+			worldMatrix = glm::mat4(1.0f);
+
 	}
 
 	//change polygon mode
@@ -807,3 +833,18 @@
 			studentMatrixArray[currentStudent] = glm::rotate(studentMatrixArray[currentStudent], glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
+	//rotates the entire world in the x direction
+	//dir = -1.0f: -x dir (anti clockwise)
+	//dir = 1.0f: +x dir (anti clockwise)
+	void rotateWorldX(float dir)
+	{
+		worldMatrix = glm::rotate(worldMatrix, glm::radians(dir * 0.5f), glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+
+	//rotates the entire world in the y direction
+	//dir = -1: -y dir
+	//dir = 1: +y dir
+	void rotateWorldY(float dir)
+	{
+		worldMatrix = glm::rotate(worldMatrix, glm::radians(dir * 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+	}

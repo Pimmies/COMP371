@@ -5,9 +5,11 @@ Right click + move cursor along x-axis = pan
 Middle click + move cursor along y-axis = tilt
 Left click + move cursor along y-axis = zoom
 Direction arrows = "fly" around
+
 P = Render models as points
 L = Render models as lines
 T = Render models as filled triangles
+
 Keys 1-5 = select a model
 W = move selected model up
 A = move selected model left
@@ -17,6 +19,13 @@ U = scale selected model up
 J = scale selected model down
 Q = rotate selected model left
 E = rotate selected model right
+
+B = rotate world +x axis (anticlockwise)
+M = rotate world -x axis (anticlockwise)
+N = rotate world down around y-axis
+H = rotate world up around y-axis
+R = reset world rotation
+
 Escape key = exit the application
 
 
