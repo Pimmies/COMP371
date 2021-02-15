@@ -479,9 +479,9 @@
         glm::mat4 transform = glm::mat4(1.0f); //starts as a clean identity matrix
         transform = glm::mat4(1.0f); //important! transform matrix need to be set back to a clean state (identity matrix) because we are transforming a new cube!
         transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); //second rotate
-        glm::mat4 worldMatrix = transform * glm::mat4(1.0f);
-		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
-		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+        glm::mat4 modelMatrix = transform * glm::mat4(1.0f);
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
 	}
     
