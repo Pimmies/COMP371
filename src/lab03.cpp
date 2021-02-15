@@ -34,11 +34,13 @@
 	void rotateWorldX(float dir);
 	void rotateWorldY(float dir);
 	void processPolygonMode(GLFWwindow* window);
-	void drawCamil(int shaderProgram, glm::mat4 studentMatrix);
-	void drawJulie(int shaderProgram, glm::mat4 studentMatrix);
-    void drawClaudia(int shaderProgram, glm::mat4 studentMatrix);
-    void drawCharles(int shaderProgram, glm::mat4 studentMatrix);
-	void drawMax(int shaderProgram, glm::mat4 studentMatrix);
+    void initializePlacements(glm::mat4 pMat[5], float radius);
+    void calculateRotationAngles(float length, float radius, float rotation_angles[4]);
+	void drawCamil(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+	void drawJulie(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+    void drawClaudia(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+    void drawCharles(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+	void drawMax(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
     void drawLines(int shaderProgram);
 	void drawCircle(int shaderProgram);
     void drawGrid(int shaderProgram, glm::vec3 translationMatrix);
@@ -107,7 +109,7 @@
 		"   FragColor = vec4(ourColor, 1.0);\n"
 		"}";
 
-	int main()
+    int main()
 	{
 		//INITIALIZE GLFW
 		glfwInit();
@@ -232,7 +234,7 @@
 		float y;
 		float z = 0.0f;
 		float angle = 0.0f;
-		float radius = 9.0f;
+		float radius = 16.0f;
 		int currentIndex = 0;
 		int numPoints = 30;
 		float circleVertices[90];  //numPoints * 3
@@ -255,6 +257,10 @@
             0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
             0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
         };
+
+        float rotation_angles[4];//the angles to curve the letters to fit the circle
+        float string_length = 5.0f; //argument that controls the curve angle between each letters
+        calculateRotationAngles(string_length, radius, rotation_angles);
 
         //SETTING VERTEX ATTRIBUTES
         unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid;
@@ -322,21 +328,7 @@
 
 
 		//initial placement of students in world
-		glm::vec3 translationArray[5] = {
-		        glm::vec3(0.0f, 1.2f, 0.0f),
-		        glm::vec3(- radius, 1.2f, 0.0f),
-		        glm::vec3(0.0f, 1.2f, radius),
-		        glm::vec3( radius, 1.2f,0.0f),
-		        glm::vec3( 0.0f,1.2f,-radius)
-		};
-		for (int i = 0; i < 5; i++)
-		{
-			studentMatrixArray[i] = glm::mat4(1.0f);
-			studentMatrixArray[i] = glm::translate(studentMatrixArray[i], translationArray[i]);
-            studentMatrixArray[i] = glm::rotate(studentMatrixArray[i], glm::radians(90.0f*i), glm::vec3(0.0f, 1.0f, 0.0f));
-		}
-
-		//studentMatrixArray[0] = glm::translate(studentMatrixArray[0], glm::vec3(-5.0f, 0.0f, 0.0f));
+		initializePlacements(studentMatrixArray, radius);
 
 		worldMatrix = glm::mat4(1.0f); //update on render loop and on input
 		glm::mat4 view; //updated in render loop
@@ -378,11 +370,11 @@
             glBindVertexArray(VAO_circle);
 			drawCircle(shaderProgram);
             glBindVertexArray(VAO_cube);
-			drawJulie(shaderProgram, studentMatrixArray[0]);
-			drawClaudia(shaderProgram, studentMatrixArray[1]);
-			drawCamil(shaderProgram, studentMatrixArray[2]);
-			drawCharles(shaderProgram, studentMatrixArray[3]);
-            drawMax(shaderProgram, studentMatrixArray[4]);
+            drawJulie(shaderProgram, studentMatrixArray[0], rotation_angles);
+			drawClaudia(shaderProgram, studentMatrixArray[1], rotation_angles);
+			drawCamil(shaderProgram, studentMatrixArray[2], rotation_angles);
+			drawCharles(shaderProgram, studentMatrixArray[3], rotation_angles);
+            drawMax(shaderProgram, studentMatrixArray[4], rotation_angles);
             
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -397,7 +389,32 @@
 		return 0;
 	}
 
-	void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
+    void initializePlacements(glm::mat4 *pMat, float radius)
+    {
+        glm::vec3 translationArray[5] = {
+                glm::vec3(0.0f, 1.4f, 0.0f),
+                glm::vec3(- radius, 1.4f, 0.0f),
+                glm::vec3(0.0f, 1.4f, radius),
+                glm::vec3( radius, 1.4f,0.0f),
+                glm::vec3( 0.0f,1.4f,-radius)
+        };
+        for (int i = 0; i < 5; i++)
+        {
+            studentMatrixArray[i] = glm::mat4(1.0f);
+            studentMatrixArray[i] = glm::translate(studentMatrixArray[i], translationArray[i]);
+            studentMatrixArray[i] = glm::rotate(studentMatrixArray[i], glm::radians(90.0f*i), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+    }
+
+    void calculateRotationAngles(float length, float radius, float rotation_angles[4]) {
+        float rotation_argument = length/radius * (180.0f / M_PI) /2 ;
+        rotation_angles[0] = 2 * rotation_argument;
+        rotation_angles[1] = 1 * rotation_argument;
+        rotation_angles[2] = -1 * rotation_argument;
+        rotation_angles[3] = -2 * rotation_argument;
+    }
+
+    void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
         const int AMOUNT_OF_LINES = 128;
         const int LIMIT = AMOUNT_OF_LINES/2;
 
@@ -484,15 +501,14 @@
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
 	}
-    
-	void drawJulie(int shaderProgram, glm::mat4 studentMatrix)
+
+    void drawJulie(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
 	{
 	    //Tilt
 	    //Generate the series of angles some how, together with the translation arguments
 	    //30,15,-15,-30
 	    //-4, -2, 1.6, 3.5
 	    //For Loop to generate each letterMatrix
-	    float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
 	    glm::vec3 translationVectorArray[4] = {
 	            glm::vec3(-4.0f, 0.0f, 1.0f),
 	            glm::vec3(-2.0f, 0.0f, 0.0f),
@@ -512,8 +528,7 @@
         LetterHelper::draw5(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
-    void drawCharles(int shaderProgram, glm::mat4 studentMatrix){
-        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+    void drawCharles(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]){
         glm::vec3 translationVectorArray[4] = {
                 glm::vec3(-4.0f, 0.0f, 1.0f),
                 glm::vec3(-2.0f, 0.0f, 0.0f),
@@ -533,8 +548,7 @@
         LetterHelper::draw3(shaderProgram, letterMatrixArray[3], studentMatrix);
     }
 
-	void drawClaudia(int shaderProgram, glm::mat4 studentMatrix) {
-        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
+	void drawClaudia(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]) {
         glm::vec3 translationVectorArray[4] = {
                 glm::vec3(-4.0f, 0.0f, 1.0f),
                 glm::vec3(-2.0f, 0.0f, 0.0f),
@@ -554,9 +568,8 @@
         LetterHelper::draw9(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
-	void drawMax(int shaderProgram, glm::mat4 studentMatrix)
+	void drawMax(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
 	{
-        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
         glm::vec3 translationVectorArray[4] = {
                 glm::vec3(-4.0f, 0.0f, 1.0f),
                 glm::vec3(-2.3f, 0.0f, 0.0f),
@@ -576,9 +589,8 @@
         LetterHelper::draw9(shaderProgram, letterMatrixArray[3], studentMatrix);
     }
 
-	void drawCamil(int shaderProgram, glm::mat4 studentMatrix)
+	void drawCamil(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
 	{
-        float rotation_angles[4] = {30.0f, 15.0f, -15.0f, -30.0f};
         glm::vec3 translationVectorArray[4] = {
                 glm::vec3(-4.0f, 0.0f, 1.0f),
                 glm::vec3(-2.5f, 0.0f, 0.0f),
@@ -848,3 +860,5 @@
 	{
 		worldMatrix = glm::rotate(worldMatrix, glm::radians(dir * 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
+
+
