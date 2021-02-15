@@ -316,7 +316,6 @@
 
 
 		//initial placement of students in world
-		//first one stay at the center;
 		glm::vec3 translationArray[5] = {
 		        glm::vec3(0.0f, 1.2f, 0.0f),
 		        glm::vec3(- radius, 1.2f, 0.0f),
