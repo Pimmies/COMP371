@@ -384,28 +384,6 @@
 	//initialize student model placements
     void initializePlacements(glm::mat4 studentMatrixArray[], float radius)
     {
-        /*glm::vec3 translationArray[5] = {
-                glm::vec3(0.0f, 1.4f, 0.0f),
-                glm::vec3(- radius, 1.4f, 0.0f),
-                glm::vec3(0.0f, 1.4f, radius),
-                glm::vec3( radius, 1.4f, 0.0f),
-                glm::vec3( 0.0f, 1.4f, -radius)
-        };
-        for (int i = 0; i < 5; i++)
-        {
-            studentMatrixArray[i] = glm::mat4(1.0f);
-            studentMatrixArray[i] = glm::translate(studentMatrixArray[i], translationArray[i]);
-            studentMatrixArray[i] = glm::rotate(studentMatrixArray[i], glm::radians(90.0f*i), glm::vec3(0.0f, 1.0f, 0.0f));
-        }*/
-		
-		//glm::vec3 translationArray[5] = {
-		//		glm::vec3(0.0f, 1.4f, 0.0f),
-		//		glm::vec3(-sin(glm::radians(45.0f)) * radius, 1.4f, -cos(glm::radians(45.0f)) * radius), //claudia
-		//		glm::vec3(sin(glm::radians(315.0f)) * radius, 1.4f, cos(glm::radians(315.0f)) * radius), //camil
-		//		glm::vec3(-sin(glm::radians(315.0f)) * radius, 1.4f, cos(glm::radians(315.0f)) * radius), //charles
-		//		glm::vec3(sin(glm::radians(45.0f)) * radius, 1.4f, -cos(glm::radians(45.0f)) * radius) //max
-		//};
-
 		glm::vec3 translationArray[5] = {
 				glm::vec3(0.0f, 1.4f, 0.0f),
 				glm::vec3(sin(glm::radians(45.0f)) * radius, 1.4f, -cos(glm::radians(45.0f)) * radius), //claudia
