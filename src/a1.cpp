@@ -39,9 +39,10 @@
     void drawClaudia(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
-    void drawLines(int shaderProgram);
+    void drawLines(int shaderProgram, glm::vec3 scalingVector);
 	void drawCircle(int shaderProgram);
-    void drawGrid(int shaderProgram, glm::vec3 translationMatrix);
+    void drawGrid(int shaderProgram, glm::vec3 translationMatrix, glm::vec3 scalingVector);
+    void reset();
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -210,16 +211,6 @@
 			-0.5f,  0.5f,  0.5f, 0.980f, 0.529f, 0.160f,
 			-0.5f,  0.5f, -0.5f, 0.980f, 0.529f, 0.160f,
 		};
-        
-		float axisVertices[] = {
-			//coordinate		colours
-			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-			7.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 7.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
-		};
 
 		//VERTICES FOR A CIRCLE
 		//helper source: https://stackoverflow.com/questions/32443776/drawing-a-circle-with-opengl
@@ -251,9 +242,17 @@
             0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
         };
 
-        float rotation_angles[4];//the angles to curve the letters to fit the circle
-        float string_length = 5.0f; //argument that controls the curve angle between each letters
-        calculateRotationAngles(string_length, radius, rotation_angles);  //calculate rotation of each letter
+        float axisVertices[] = {
+                //coordinate		    colours
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                7.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 7.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
+        };
+
+
 
         //SETTING VERTEX ATTRIBUTES
         unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid;
@@ -286,7 +285,7 @@
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         //VAO OF CIRCLE
         glGenVertexArrays(1, &VAO_circle);
@@ -320,6 +319,9 @@
 
 
 		//initial placement of students in world
+        float rotation_angles[4];//the angles to curve the letters to fit the circle
+        float string_length = 5.0f; //argument that controls the curve angle between each letters
+        calculateRotationAngles(string_length, radius, rotation_angles);  //calculate rotation of each letter
 		initializePlacements(studentMatrixArray, radius);
 
 		//get uniform location for view and projection
@@ -350,15 +352,18 @@
 
 			//draw grid
             glBindVertexArray(VAO_grid);
-            drawGrid(shaderProgram, glm::vec3(0.0f, 0.0f, 0.0f));
+            drawGrid(shaderProgram, glm::vec3(0.0f, -0.025f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
 
 			//draw axis
+            glEnable(GL_LINE_SMOOTH);
+            glLineWidth(3.0f);
             glBindVertexArray(VAO_axis);
-            drawLines(shaderProgram);
+            drawLines(shaderProgram, glm::vec3(0.25f, 0.25f, 0.25f));
+            glDisable(GL_LINE_SMOOTH);
 
-			//draw circle
-            glBindVertexArray(VAO_circle);
-			drawCircle(shaderProgram);
+            //draw circle
+            //glBindVertexArray(VAO_circle);
+			//drawCircle(shaderProgram);
             
 			//draw students
 			glBindVertexArray(VAO_cube);
@@ -373,9 +378,17 @@
 		}
 
 		//de-allocate all resources
-		/*glDeleteVertexArrays(1, &VAO);
-		glDeleteBuffers(1, &VBO);*/
-		glDeleteProgram(shaderProgram);
+		glDeleteVertexArrays(1, &VAO_axis);
+		glDeleteVertexArrays(1, &VAO_circle);
+		glDeleteVertexArrays(1, &VAO_cube);
+        glDeleteVertexArrays(1, &VAO_grid);
+
+        glDeleteBuffers(1, &VBO_axis);
+        glDeleteBuffers(1, &VBO_cirle);
+        glDeleteBuffers(1, &VBO_cube);
+        glDeleteBuffers(1, &VBO_grid);
+
+        glDeleteProgram(shaderProgram);
 
 		glfwTerminate();
 		return 0;
@@ -385,11 +398,11 @@
     void initializePlacements(glm::mat4 studentMatrixArray[], float radius)
     {
 		glm::vec3 translationArray[5] = {
-				glm::vec3(0.0f, 1.4f, 0.0f),
-				glm::vec3(sin(glm::radians(45.0f)) * radius, 1.4f, -cos(glm::radians(45.0f)) * radius), //claudia
-				glm::vec3(sin(glm::radians(135.0f)) * radius, 1.4f, -cos(glm::radians(135.0f)) * radius), //camil
-				glm::vec3(sin(glm::radians(225.0f)) * radius, 1.4f, -cos(glm::radians(225.0f)) * radius), //charles
-				glm::vec3(sin(glm::radians(315.0f)) * radius, 1.4f, -cos(glm::radians(315.0f)) * radius) //max
+				glm::vec3(0.0f, 1.475, 0.0f),
+				glm::vec3(sin(glm::radians(45.0f)) * radius, 1.475f, -cos(glm::radians(45.0f)) * radius), //claudia
+				glm::vec3(sin(glm::radians(135.0f)) * radius, 1.475f, -cos(glm::radians(135.0f)) * radius), //camil
+				glm::vec3(sin(glm::radians(225.0f)) * radius, 1.475f, -cos(glm::radians(225.0f)) * radius), //charles
+				glm::vec3(sin(glm::radians(315.0f)) * radius, 1.475f, -cos(glm::radians(315.0f)) * radius) //max
 		};
 		
 		float angle = 0.0f;
@@ -415,13 +428,12 @@
         rotation_angles[3] = -2 * rotation_argument;
     }
 
-    void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
+    void drawGrid(int shaderProgram, glm::vec3 translationMatrix, glm::vec3 scalingVector) {
         const int AMOUNT_OF_LINES = 128;
         const int LIMIT = AMOUNT_OF_LINES/2;
-
         glm::mat4 gridMatrix = glm::mat4(1.0f);
         gridMatrix = glm::translate(gridMatrix, translationMatrix);                            // move matrix to origin
-        gridMatrix = glm::scale(gridMatrix, glm::vec3(0.25f, 0.25f, 0.25f));    // scale matrix down (1/4)
+        gridMatrix = glm::scale(gridMatrix, scalingVector);    // scale matrix down (1/4)
 
         glm::mat4 transform = glm::mat4(1.0f);
         glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -480,15 +492,41 @@
         }
     }
 
-    void drawLines(int shaderProgram){
-        
+    void drawLines(int shaderProgram, glm::vec3 scalingVector){
+
         //modelMatrix = position of lines in world
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.25f, 0.0f, 0.0f));
+		transform = glm::scale(transform, scalingVector);
+		modelMatrix = transform * glm::mat4(1.0f);
 		unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-		glDrawArrays(GL_LINES, 0, 6);
+        glDrawArrays(GL_LINES, 0, 6);
+
+/*
+        glm::vec3 translationVectorArray[4] = {
+                glm::vec3(-4.0f, 0.0f, 0.0f),
+                glm::vec3(-2.0f, 0.0f, 0.0f),
+                glm::vec3(2.0f, 0.0f, 0.0f),
+                glm::vec3(4.0f, 0.0f, 0.0f)
+        };
+
+        //1st cube
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.0f, -1.25f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::scale(transform, glm::vec3(0.5f, 1.5f, 1.0f));
+
+//update uniform location model matrix
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        modelMatrix = studentMatrix * letterMatrix * transform;
+
+        unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+        glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+         */
     }
 
 	void drawCircle(int shaderProgram)
@@ -731,10 +769,9 @@
 			rotateWorldY(-1.0f);
 		if (key == GLFW_KEY_H && action == GLFW_PRESS)
 			rotateWorldY(1.0f);
-		if (key == GLFW_KEY_R && action == GLFW_PRESS)
+		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 			//Home button: resets the world
-			worldMatrix = glm::mat4(1.0f);
-
+		    reset();
 	}
 
 	//process keyboard input
@@ -762,7 +799,7 @@
         }
 		
 		//fly around
-		float cameraSpeed = 5 * deltaTime;
+		float cameraSpeed = 8 * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 			cameraPos = cameraPos + cameraSpeed * cameraFront;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
@@ -796,32 +833,32 @@
 			studentMatrixArray[currentStudent] = glm::scale(studentMatrixArray[currentStudent], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
 	}
 	
-	//moves the currentStudent 5 units to the left
+	//moves the currentStudent 1 units to the left
 	void moveModelLeft()
 	{
 		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(-5.0f, 0.0f, 0.0f));
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(-1.0f, 0.0f, 0.0f));
 	}
 
-	//moves currentStudent 5 units to the right
+	//moves currentStudent 1 units to the right
 	void moveModelRight()
 	{
 		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(5.0f, 0.0f, 0.0f));
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
-	//moves currentStudent 5 units up
+	//moves currentStudent 1 units up
 	void moveModelUp()
 	{
 		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, 5.0f, 0.0f));
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
-	//moves currentStudent 5 units down
+	//moves currentStudent 1 units down
 	void moveModelDown()
 	{
 		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, -5.0f, 0.0f));
+			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 
 	//rotates currentStudent left
@@ -854,4 +891,25 @@
 		worldMatrix = glm::rotate(worldMatrix, glm::radians(dir * 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
+    void reset(){
 
+        //initial placement of students in world
+        float radius = 16.0f;
+        float rotation_angles[4];//the angles to curve the letters to fit the circle
+        float string_length = 5.0f; //argument that controls the curve angle between each letters
+        calculateRotationAngles(string_length, radius, rotation_angles);  //calculate rotation of each letter
+        initializePlacements(studentMatrixArray, radius);
+
+        // camera starting placement
+        cameraPos = glm::vec3(0.0f, 6.0f, 30.0f);
+        cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+        // reset field of view (for the zoom)
+        fieldOfView = 45.0f;
+
+        // reset polygone mode to GL_FILL
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        worldMatrix = glm::mat4(1.0f);
+}

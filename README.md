@@ -1,32 +1,32 @@
 # COMP371-A1
 
 Controls:
-Right click + move cursor along x-axis = pan
-Middle click + move cursor along y-axis = tilt
-Left click + move cursor along y-axis = zoom
-Direction arrows = "fly" around
+Right click + move cursor along x-axis = pan<br />
+Middle click + move cursor along y-axis = tilt<br />
+Left click + move cursor along y-axis = zoom<br />
+Direction arrows = "fly" around<br />
 
-P = Render models as points
-L = Render models as lines
-T = Render models as filled triangles
+P = Render models as points<br />
+L = Render models as lines<br />
+T = Render models as filled triangles<br />
 
-Keys 1-5 = select a model
-W = move selected model up
-A = move selected model left
-S = move selected model down
-D = move selected model right
-U = scale selected model up
-J = scale selected model down
-Q = rotate selected model left
-E = rotate selected model right
+Keys 1-5 = select a model<br />
+W = move selected model up<br />
+A = move selected model left<br />
+S = move selected model down<br />
+D = move selected model right<br />
+U = scale selected model up<br />
+J = scale selected model down<br />
+Q = rotate selected model left<br />
+E = rotate selected model right<br />
 
-B = rotate world +x axis (anticlockwise)
-M = rotate world -x axis (anticlockwise)
-N = rotate world down around y-axis
-H = rotate world up around y-axis
-R = reset world rotation
+B = rotate world +x axis (anticlockwise)<br />
+M = rotate world -x axis (anticlockwise)<br />
+N = rotate world down around y-axis<br />
+H = rotate world up around y-axis<br />
+SPACE KEY = reset world rotation<br />
 
-Escape key = exit the application
+Escape key = exit the application<br />
 
 
 ## Build Instructions
@@ -100,12 +100,12 @@ at the top level of the source folder.
 In the terminal type:
 
 ```
-./lab03
+./a1
 ```
 
 ### Windows
 
-Click on the **lab03.exe** from the File Explorer.
+Click on the **a1.exe** from the File Explorer.
 
 ## References
 
