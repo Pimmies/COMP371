@@ -7,7 +7,7 @@ Claudia Guerreiro - 26951929<br />
 Julie Pierrisnard 40077165<br />
 Ningyuan Sun 40124859<br />
 
-Controls:
+## Controls:
 Right click + move cursor along x-axis = pan<br />
 Middle click + move cursor along y-axis = tilt<br />
 Left click + move cursor along y-axis = zoom<br />
