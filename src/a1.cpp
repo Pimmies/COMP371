@@ -210,16 +210,6 @@
 			-0.5f,  0.5f,  0.5f, 0.980f, 0.529f, 0.160f,
 			-0.5f,  0.5f, -0.5f, 0.980f, 0.529f, 0.160f,
 		};
-        
-		float axisVertices[] = {
-			//coordinate		colours
-			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-			7.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 7.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
-		};
 
 		//VERTICES FOR A CIRCLE
 		//helper source: https://stackoverflow.com/questions/32443776/drawing-a-circle-with-opengl
@@ -249,6 +239,16 @@
             1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
             0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
             0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        float axisVertices[] = {
+                //coordinate		    colours
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                7.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 7.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
         };
 
         float rotation_angles[4];//the angles to curve the letters to fit the circle
@@ -418,7 +418,6 @@
     void drawGrid(int shaderProgram, glm::vec3 translationMatrix) {
         const int AMOUNT_OF_LINES = 128;
         const int LIMIT = AMOUNT_OF_LINES/2;
-
         glm::mat4 gridMatrix = glm::mat4(1.0f);
         gridMatrix = glm::translate(gridMatrix, translationMatrix);                            // move matrix to origin
         gridMatrix = glm::scale(gridMatrix, glm::vec3(0.25f, 0.25f, 0.25f));    // scale matrix down (1/4)
@@ -484,7 +483,7 @@
         
         //modelMatrix = position of lines in world
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.25f, 0.25f, 0.25f));
 		unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 

@@ -20,7 +20,7 @@ include(BuildGLFW)
 include(BuildGLM)
 
 # lab03
-set(EXEC lab03)
+set(EXEC a1)
 
 file(GLOB SRC src/*.cpp)
 
