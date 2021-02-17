@@ -1,5 +1,12 @@
 # COMP371-A1
 
+## Contributors
+Camil Bouzidi - 40099611 <br />
+Charles Abou Haidar - 40024373<br />
+Claudia Guerreiro - 26951929<br />
+Julie Pierrisnard 40077165<br />
+Ningyuan Sun 40124859<br />
+
 Controls:
 Right click + move cursor along x-axis = pan<br />
 Middle click + move cursor along y-axis = tilt<br />
