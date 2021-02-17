@@ -908,7 +908,7 @@
         // reset field of view (for the zoom)
         fieldOfView = 45.0f;
 
-        // reset polygone mode
+        // reset polygone mode to GL_FILL
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         worldMatrix = glm::mat4(1.0f);
