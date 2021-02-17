@@ -24,7 +24,7 @@ B = rotate world +x axis (anticlockwise)
 M = rotate world -x axis (anticlockwise)
 N = rotate world down around y-axis
 H = rotate world up around y-axis
-R = reset world rotation
+SPACE KEY = reset world rotation
 
 Escape key = exit the application
 
