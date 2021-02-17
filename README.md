@@ -100,12 +100,12 @@ at the top level of the source folder.
 In the terminal type:
 
 ```
-./lab03
+./a1
 ```
 
 ### Windows
 
-Click on the **lab03.exe** from the File Explorer.
+Click on the **a1.exe** from the File Explorer.
 
 ## References
 
