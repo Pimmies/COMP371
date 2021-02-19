@@ -101,7 +101,7 @@ void LetterHelper::drawSphere(int shaderProgram, glm::mat4 matrixToApply, int VA
 
 		transform = glm::mat4(1.0f);
 		transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (4.0f / 64.0f), (4.0f / 64.0f)));
+		transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (2.0f / 64.0f), (2.0f / 64.0f)));
 
 		modelMatrix = matrixToApply * transform * glm::mat4(1.0f);
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
@@ -187,34 +187,69 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
-	//6th cube: close bottom loop
-	//transform = glm::mat4(1.0f);
-	//transform = glm::translate(transform, glm::vec3(1.8f, -0.62f, 0.0f));
-	//transform = glm::scale(transform, glm::vec3(0.5f, 1.76f, 0.5f));
+	//6th cube: close bottom loop right
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(0.7f, 0.0f, 0.0f)); //third translate
+	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
-	////update uniform location model matrix
-	//modelMatrix = glm::mat4(1.0f);
-	//modelMatrix = studentMatrix * letterMatrix * transform;
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
 
-	//glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+	//5th cube: close top loop
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(1.0f, -0.7f, 0.0f));
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
+
+	//6th cube: close bottom loop left
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(0.7f, 0.0f, 0.0f)); //third translate
+	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+	//5th cube: close top loop
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(0.0f, -0.7f, 0.0f));
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 }
 
 void LetterHelper::drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube)
 {
-	//1st cube: long vertical left
 	glm::mat4 transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(-0.75f, 0.75f, 0.0f));
-	transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 0.5f));
-
-	//update uniform location model matrix
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	modelMatrix = studentMatrix * letterMatrix * transform;
-
 	unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+	//1st cube: long vertical left
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(-0.50f, 1.0f, 0.0f));
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
 	//2nd cube: bottom base
 	transform = glm::mat4(1.0f);
@@ -230,15 +265,13 @@ void LetterHelper::drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//3rd cube: long vertical right
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.75f, 0.75f, 0.0f));
-	transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 0.5f));
+	transform = glm::translate(transform, glm::vec3(0.50f, 1.0f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = studentMatrix * letterMatrix * transform;
 
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
 	//4th cube: top base
 	transform = glm::mat4(1.0f);
@@ -255,19 +288,20 @@ void LetterHelper::drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 void LetterHelper::drawULast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube)
 {
-	//1st cube: long vertical left
 	glm::mat4 transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(-0.75f, 0.75f, 0.0f));
-	transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 0.5f));
-
-	//update uniform location model matrix
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	modelMatrix = studentMatrix * letterMatrix * transform;
-
 	unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+	//1st cube: long vertical left
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(-0.50f, 1.0f, 0.0f));
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
 	//2nd cube: bottom base
 	transform = glm::mat4(1.0f);
@@ -283,15 +317,13 @@ void LetterHelper::drawULast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//3rd cube: long vertical right
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.75f, 0.75f, 0.0f));
-	transform = glm::scale(transform, glm::vec3(0.5f, 2.0f, 0.5f));
+	transform = glm::translate(transform, glm::vec3(0.50f, 1.0f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = studentMatrix * letterMatrix * transform;
 
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 }
 
 void LetterHelper::drawZLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube)
@@ -367,7 +399,7 @@ void LetterHelper::drawILast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//2nd cube: top base
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.0f, 1.75f, 0.0f)); //second translate
+	transform = glm::translate(transform, glm::vec3(0.0f, 1.5f, 0.0f)); //second translate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
@@ -379,15 +411,13 @@ void LetterHelper::drawILast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//3rd cube: middle
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.0f, 0.75f, 0.0f)); //second translate
-	transform = glm::scale(transform, glm::vec3(0.5f, 1.75f, 0.5f));  //first scale
+	transform = glm::translate(transform, glm::vec3(0.0f, 0.75f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = studentMatrix * letterMatrix * transform;
 
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 }
 
 void LetterHelper::drawDLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube)
@@ -418,17 +448,15 @@ void LetterHelper::drawDLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	//3rd cube: middle
+	//sphere: middle
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(1.5f, 1.25f, 0.0f)); //second translate
-	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+	transform = glm::translate(transform, glm::vec3(1.0f, 1.25f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = studentMatrix * letterMatrix * transform;
 
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
 	//4th cube: slanted bottom
 	transform = glm::mat4(1.0f);
@@ -455,6 +483,27 @@ void LetterHelper::drawDLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//sphere: leftmost top
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(-0.5f, 1.75f, 0.0f));
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
+
+
+	//sphere: leftmost bottom
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(-0.5f, 0.75f, 0.0f));
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 }
 
 void LetterHelper::drawJ(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)

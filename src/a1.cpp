@@ -452,6 +452,7 @@
             //draw circle
             glBindVertexArray(VAO_circle);
 			drawCircle(shaderProgram);
+			drawSphereTest(shaderProgram);
 
 			//draw cylinders
 			drawCylinder();
@@ -631,12 +632,27 @@
 		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
+		//r=0.25
 		for (int i = 0; i < 361; i++) {
 
 			transform = glm::mat4(1.0f);
 			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, -8.0f));
 			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (4.0f / 64.0f), (4.0f / 64.0f)));
+			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
+
+			modelMatrix = transform * glm::mat4(1.0f);
+			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+
+		}
+
+		//1-unit tall sphere
+		for (int i = 0; i < 361; i++) {
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(2.0f, 0.0f, -8.0f));
+			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (2.0f / 64.0f), (2.0f / 64.0f)));
 
 			modelMatrix = transform * glm::mat4(1.0f);
 			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
