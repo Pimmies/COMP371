@@ -24,6 +24,12 @@ public:
     static void draw2(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void draw9(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void drawB(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+	static void drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+	static void drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+	static void drawULast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+	static void drawZLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+	static void drawILast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
+	static void drawDLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void draw1(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void draw3(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void drawN(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);

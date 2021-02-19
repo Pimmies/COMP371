@@ -47,6 +47,10 @@
     void drawGrid(int shaderProgram, glm::vec3 translationMatrix, glm::vec3 scalingVector);
     void reset();
 
+
+	//quiz
+	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
 	const unsigned int SCR_HEIGHT = 768;
@@ -359,7 +363,7 @@
 
 
 		//VAO of Sphere
-		glGenVertexArrays(1, &VAO_sphere);
+		/*glGenVertexArrays(1, &VAO_sphere);
 		glGenBuffers(1, &VBO_sphere);
 
 		glBindVertexArray(VAO_sphere);
@@ -371,7 +375,7 @@
 
 		glGenBuffers(1, &VBO_sphere_index);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO_sphere_index);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);*/
 
 
 		//initial placement of students in world
@@ -422,13 +426,14 @@
 			//drawCircle(shaderProgram);
 
 			//draw sphere
-			drawSphere(shaderProgram, VAO_sphere, VBO_sphere_index, numsToDraw);
+			//drawSphere(shaderProgram, VAO_sphere, VBO_sphere_index, numsToDraw);
             
 			//draw students
 			glBindVertexArray(VAO_cube);
 			/*drawJulie(shaderProgram, studentMatrixArray[0], rotation_angles);
 			drawClaudia(shaderProgram, studentMatrixArray[1], rotation_angles);*/
-			drawCamil(shaderProgram, studentMatrixArray[2], rotation_angles);
+			drawCamil(shaderProgram, glm::mat4(1.0f), rotation_angles);
+			drawCamilLast(shaderProgram, glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -16.0f)), rotation_angles);
 			/*drawCharles(shaderProgram, studentMatrixArray[3], rotation_angles);
             drawMax(shaderProgram, studentMatrixArray[4], rotation_angles);*/
             
@@ -717,6 +722,30 @@
         LetterHelper::drawB(shaderProgram, letterMatrixArray[1], studentMatrix);
         LetterHelper::draw4(shaderProgram, letterMatrixArray[2], studentMatrix);
         LetterHelper::draw1(shaderProgram, letterMatrixArray[3], studentMatrix);
+	}
+
+	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
+	{
+		glm::vec3 translationVectorArray[6] = {
+				glm::vec3(0.0f, 25.0f, 0.0f),
+				glm::vec3(0.0f, 20.0f, 0.0f),
+				glm::vec3(0.0f, 15.0f, 0.0f),
+				glm::vec3(0.0f, 10.0f, 0.0f),
+				glm::vec3(0.0f, 5.0f, 0.0f),
+				glm::vec3(0.0f, 0.0f, 0.0f)
+		};
+		glm::mat4 letterMatrixArray[6];
+		for (int i = 0; i < 6; i++) {
+			letterMatrixArray[i] = glm::mat4(1.0f);
+			letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+		}
+		//draw letters
+		LetterHelper::drawBLast(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+		LetterHelper::drawOLast(shaderProgram, letterMatrixArray[1], studentMatrix);
+		LetterHelper::drawULast(shaderProgram, letterMatrixArray[2], studentMatrix);
+		LetterHelper::drawZLast(shaderProgram, letterMatrixArray[3], studentMatrix);
+		LetterHelper::drawILast(shaderProgram, letterMatrixArray[4], studentMatrix);
+		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix);
 	}
 
 	//when the window size is changed, this function is called
