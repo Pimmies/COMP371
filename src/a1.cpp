@@ -439,8 +439,8 @@
             glDisable(GL_LINE_SMOOTH);
 
             //draw circle
-            //glBindVertexArray(VAO_circle);
-			//drawCircle(shaderProgram);
+            glBindVertexArray(VAO_circle);
+			drawCircle(shaderProgram);
 
 			//draw sphere
 			//drawSphere(shaderProgram, VAO_sphere, VBO_sphere_index, numsToDraw);
@@ -631,10 +631,44 @@
         glm::mat4 transform = glm::mat4(1.0f);
         transform = glm::mat4(1.0f);
         transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
         glm::mat4 modelMatrix = transform * glm::mat4(1.0f);
 		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+
+		for (int i = 0; i < 361; i++) {
+
+			transform = glm::mat4(1.0f);
+			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
+
+			modelMatrix = transform * glm::mat4(1.0f);
+			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+
+		}
+
+		for (int i = 0; i < 361; i++) {
+
+			transform = glm::mat4(1.0f);
+			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
+
+			modelMatrix = transform * glm::mat4(1.0f);
+			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+		}
+
+		for (int i = 0; i < 361; i++) {
+
+			transform = glm::mat4(1.0f);
+			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(0.0f, 0.0f, 0.1f));
+			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
+
+			modelMatrix = transform * glm::mat4(1.0f);
+			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+		}
 	}
 
     void drawJulie(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
