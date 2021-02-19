@@ -120,9 +120,9 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	
 	
-	//1st sphere: long one
+	//1st sphere: close top loop left
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.0f, 0.7f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(0.1f, 0.7f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
@@ -132,7 +132,20 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//bottom base 1
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.7f, -1.25f, 0.0f)); //third translate
+	transform = glm::translate(transform, glm::vec3(0.5f, -1.25f, 0.0f)); //third translate
+	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+	//bottom base 2
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(1.5f, -1.25f, 0.0f)); //third translate
 	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
@@ -144,11 +157,10 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
 
 	//3rd cube: top part
-	//Prof said I could scale this one
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.5f, 1.30f, 0.0f)); //third translate
 	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
-	transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.25f));  //first scale
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
@@ -164,9 +176,9 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	//4th cube: middle part
+	//4th cube: middle part 1
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.7f, 0.0f, 0.0f)); //third translate
+	transform = glm::translate(transform, glm::vec3(0.5f, 0.0f, 0.0f)); //third translate
 	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
@@ -177,7 +189,20 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
 
-	//5th cube: close top loop
+	//4th cube: middle part 2
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(1.5f, 0.0f, 0.0f)); //third translate
+	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+	//5th cube: close top loop right
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(1.0f, 0.7f, 0.0f));
 
@@ -187,22 +212,9 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
-	//6th cube: close bottom loop right
+	//5th cube: close bottom loop right
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.7f, 0.0f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
-	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
-
-	//update uniform location model matrix
-	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = studentMatrix * letterMatrix * transform;
-
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
-
-	//5th cube: close top loop
-	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(1.0f, -0.7f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(2.0f, -0.7f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
@@ -210,22 +222,9 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	drawSphere(shaderProgram, modelMatrix, VAO_circle, VAO_cube);
 
-	//6th cube: close bottom loop left
+	//5th cube: close bottom loop left
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.7f, 0.0f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
-	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
-
-	//update uniform location model matrix
-	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = studentMatrix * letterMatrix * transform;
-
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
-
-	//5th cube: close top loop
-	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.0f, -0.7f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(0.1f, -0.7f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
