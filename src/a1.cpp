@@ -15,6 +15,8 @@
 #include <glm/common.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "helpers/LetterHelper.h"
+//#include "helpers/Sphere.h"
+#include <vector>
 
 //declare our functions
 	void framebuffer_size_callback(GLFWwindow * window, int width, int height);
@@ -40,6 +42,7 @@
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
     void drawLines(int shaderProgram, glm::vec3 scalingVector);
+	void drawSphere(int shaderProgram, int vao, int vboIndex, int numsToDraw);
 	void drawCircle(int shaderProgram);
     void drawGrid(int shaderProgram, glm::vec3 translationMatrix, glm::vec3 scalingVector);
     void reset();
@@ -252,10 +255,47 @@
                 0.0f, 0.0f, 7.0f, 0.0f, 0.0f, 1.0f,
         };
 
+		//Create sphere vertices
+		int i, j;
+		int lats = 10;
+		int longs = 10;
+		std::vector<GLfloat> s_vertices;
+		std::vector<GLuint> indices;
+		int indicator = 0;
+		for (i = 0; i <= lats; i++) {
+			double lat0 = glm::pi<double>() * (-0.5 + (double)(i - 1) / lats);
+			double z0 = sin(lat0);
+			double zr0 = cos(lat0);
+
+			double lat1 = glm::pi<double>() * (-0.5 + (double)i / lats);
+			double z1 = sin(lat1);
+			double zr1 = cos(lat1);
+
+			for (j = 0; j <= longs; j++) {
+				double lng = 2 * glm::pi<double>() * (double)(j - 1) / longs;
+				double x = cos(lng);
+				double y = sin(lng);
+
+				s_vertices.push_back(x * zr0);
+				s_vertices.push_back(y * zr0);
+				s_vertices.push_back(z0);
+				indices.push_back(indicator);
+				indicator++;
+
+				s_vertices.push_back(x * zr1);
+				s_vertices.push_back(y * zr1);
+				s_vertices.push_back(z1);
+				indices.push_back(indicator);
+				indicator++;
+			}
+			indices.push_back(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+		}
+
+		int numsToDraw = indices.size();
 
 
         //SETTING VERTEX ATTRIBUTES
-        unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid;
+        unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid, VAO_sphere, VBO_sphere, VBO_sphere_index;
 		glGenVertexArrays(1, &VAO_cube);
 		glGenBuffers(1, &VBO_cube); //stores vertices of cube
 		glBindVertexArray(VAO_cube);
@@ -318,6 +358,22 @@
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
+		//VAO of Sphere
+		glGenVertexArrays(1, &VAO_sphere);
+		glGenBuffers(1, &VBO_sphere);
+
+		glBindVertexArray(VAO_sphere);
+		glBindBuffer(GL_ARRAY_BUFFER,VBO_sphere);
+		glBufferData(GL_ARRAY_BUFFER, s_vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(0);
+
+		glGenBuffers(1, &VBO_sphere_index);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO_sphere_index);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+
+
 		//initial placement of students in world
         float rotation_angles[4];//the angles to curve the letters to fit the circle
         float string_length = 5.0f; //argument that controls the curve angle between each letters
@@ -339,7 +395,7 @@
 
 			processInput(window);
 
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClearColor(0.0f, (50.0f/255.0f), (50.0f / 255.0f), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
@@ -364,14 +420,17 @@
             //draw circle
             //glBindVertexArray(VAO_circle);
 			//drawCircle(shaderProgram);
+
+			//draw sphere
+			drawSphere(shaderProgram, VAO_sphere, VBO_sphere_index, numsToDraw);
             
 			//draw students
 			glBindVertexArray(VAO_cube);
-			drawJulie(shaderProgram, studentMatrixArray[0], rotation_angles);
-			drawClaudia(shaderProgram, studentMatrixArray[1], rotation_angles);
+			/*drawJulie(shaderProgram, studentMatrixArray[0], rotation_angles);
+			drawClaudia(shaderProgram, studentMatrixArray[1], rotation_angles);*/
 			drawCamil(shaderProgram, studentMatrixArray[2], rotation_angles);
-			drawCharles(shaderProgram, studentMatrixArray[3], rotation_angles);
-            drawMax(shaderProgram, studentMatrixArray[4], rotation_angles);
+			/*drawCharles(shaderProgram, studentMatrixArray[3], rotation_angles);
+            drawMax(shaderProgram, studentMatrixArray[4], rotation_angles);*/
             
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -528,6 +587,22 @@
         glDrawArrays(GL_TRIANGLES, 0, 36);
          */
     }
+
+	void drawSphere(int shaderProgram, int vao, int vboIndex, int numsToDraw) {
+
+		//modelMatrix = position of lines in world
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		glm::mat4 transform = glm::mat4(1.0f);
+		modelMatrix = transform * glm::mat4(1.0f);
+		unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+		glBindVertexArray(vao);
+		glEnable(GL_PRIMITIVE_RESTART);
+		glPrimitiveRestartIndex(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndex);
+		glDrawElements(GL_QUAD_STRIP, numsToDraw, GL_UNSIGNED_INT, NULL);
+	}
 
 	void drawCircle(int shaderProgram)
 	{
