@@ -50,6 +50,10 @@
 
 	//quiz
 	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+	//Selected letter
+	//0:B 1:O 2:U 3:Z 4:I 5:D
+	int currentLetter = -1;
+	glm::mat4 lastLetterMatrixArray[6];
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -69,6 +73,7 @@
 	glm::mat4 worldMatrix = glm::mat4(1.0f); //update on render loop and on input, we start in a clean state
 	glm::mat4 view; //updated in render loop
 	glm::mat4 projection; //updated in render loop
+	glm::vec3 cubeColor = glm::vec3(1.0f, 0.0f, 0.0f); //updated for specific letter
 	
 	//user input settings
 	//panning (left right) and tilting (up down), zoom
@@ -104,9 +109,10 @@
 	const char* fragmentShaderSource = "#version 330 core\n"
 		"in vec3 ourColor;\n"
 		"out vec4 FragColor;\n"
+		"uniform vec3 cubeColor;\n"
 		"void main()\n"
 		"{\n"
-		"   FragColor = vec4(ourColor, 1.0);\n"
+		"   FragColor = vec4(cubeColor, 1.0);\n"
 		"}";
 
     int main()
@@ -388,6 +394,7 @@
 		unsigned int worldLoc = glGetUniformLocation(shaderProgram, "worldMatrix");
 		unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
 		unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
 
 
 		//RENDER LOOP
@@ -404,11 +411,14 @@
 
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); //the view is updated every frame because cameraPos is dynamically changed with keyboard input and cameraFront is dynamically changed with cursor movement
 			projection = glm::perspective(glm::radians(fieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f); //the perspective is updated every frame because the fieldOfView is dynamically changed by zooming
-			
+			cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
 			//pass updated settings to the shader
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 			glUniformMatrix4fv(worldLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+			glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
+
+
 
 			//draw grid
             glBindVertexArray(VAO_grid);
@@ -715,9 +725,14 @@
         for(int i = 0; i < 4; i++){
             letterMatrixArray[i] = glm::mat4(1.0f);
             letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+			letterMatrixArray[i] = glm::translate(letterMatrixArray[i], glm::vec3(0.0f,1.0f,0.0f));
             letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
         }
 		//draw letters
+
+		cubeColor = glm::vec3(0.0f, 1.0f, 1.0f);
+		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
         LetterHelper::drawC(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
         LetterHelper::drawB(shaderProgram, letterMatrixArray[1], studentMatrix);
         LetterHelper::draw4(shaderProgram, letterMatrixArray[2], studentMatrix);
@@ -727,11 +742,11 @@
 	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
 	{
 		glm::vec3 translationVectorArray[6] = {
-				glm::vec3(0.0f, 25.0f, 0.0f),
 				glm::vec3(0.0f, 20.0f, 0.0f),
-				glm::vec3(0.0f, 15.0f, 0.0f),
-				glm::vec3(0.0f, 10.0f, 0.0f),
-				glm::vec3(0.0f, 5.0f, 0.0f),
+				glm::vec3(0.0f, 16.0f, 0.0f),
+				glm::vec3(0.0f, 12.0f, 0.0f),
+				glm::vec3(0.0f, 8.0f, 0.0f),
+				glm::vec3(0.0f, 4.0f, 0.0f),
 				glm::vec3(0.0f, 0.0f, 0.0f)
 		};
 		glm::mat4 letterMatrixArray[6];
@@ -739,13 +754,35 @@
 			letterMatrixArray[i] = glm::mat4(1.0f);
 			letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
 		}
+
 		//draw letters
+		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
+		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawBLast(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+
+		cubeColor = glm::vec3(1.0f, 1.0f, 0.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawOLast(shaderProgram, letterMatrixArray[1], studentMatrix);
+
+		cubeColor = glm::vec3(1.0f, 0.0f, 1.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawULast(shaderProgram, letterMatrixArray[2], studentMatrix);
+
+		cubeColor = glm::vec3(0.0f, 1.0f, 1.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawZLast(shaderProgram, letterMatrixArray[3], studentMatrix);
+
+		cubeColor = glm::vec3(1.0f, 0.0f, 0.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawILast(shaderProgram, letterMatrixArray[4], studentMatrix);
+
+		cubeColor = glm::vec3(0.0f, 0.0f, 1.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix);
+
+		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 	}
 
 	//when the window size is changed, this function is called
@@ -888,18 +925,18 @@
         
 		//select student
 		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-			currentStudent = 0;
+			currentLetter = 0;
 		if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-			currentStudent = 1;
+			currentLetter = 1;
 		if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-			currentStudent = 2;
+			currentLetter = 2;
 		if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-			currentStudent = 3;
+			currentLetter = 3;
 		if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
-			currentStudent = 4;
+			currentLetter = 4;
         if(glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS
            || glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS){
-            currentStudent = -1;
+            currentLetter = -1;
         }
 		
 		//fly around
@@ -923,60 +960,60 @@
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	//scales up currentStudent by 0.1
+	//scales up currentLetter by 0.1
 	void scaleModelUp()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::scale(studentMatrixArray[currentStudent], glm::vec3(1.1f, 1.1f, 1.1f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::scale(lastLetterMatrixArray[currentLetter], glm::vec3(1.1f, 1.1f, 1.1f));
 	}
 
-	//scales down currentStudent by 0.1
+	//scales down currentLetter by 0.1
 	void scaleModelDown()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::scale(studentMatrixArray[currentStudent], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::scale(lastLetterMatrixArray[currentLetter], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
 	}
 	
-	//moves the currentStudent 1 units to the left
+	//moves the currentLetter 1 units to the left
 	void moveModelLeft()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(-1.0f, 0.0f, 0.0f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(-1.0f, 0.0f, 0.0f));
 	}
 
-	//moves currentStudent 1 units to the right
+	//moves currentLetter 1 units to the right
 	void moveModelRight()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(1.0f, 0.0f, 0.0f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
-	//moves currentStudent 1 units up
+	//moves currentLetter 1 units up
 	void moveModelUp()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, 1.0f, 0.0f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
-	//moves currentStudent 1 units down
+	//moves currentLetter 1 units down
 	void moveModelDown()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::translate(studentMatrixArray[currentStudent], glm::vec3(0.0f, -1.0f, 0.0f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 
-	//rotates currentStudent left
+	//rotates currentLetter left
 	void rotateModelLeft()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::rotate(studentMatrixArray[currentStudent], glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::rotate(lastLetterMatrixArray[currentLetter], glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 	
-	//rotates currentStudent right
+	//rotates currentLetter right
 	void rotateModelRight()
 	{
-		if (currentStudent >= 0 && currentStudent <= 4)
-			studentMatrixArray[currentStudent] = glm::rotate(studentMatrixArray[currentStudent], glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (currentLetter >= 0 && currentLetter <= 4)
+			lastLetterMatrixArray[currentLetter] = glm::rotate(lastLetterMatrixArray[currentLetter], glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 	//rotates the entire world in the x direction
