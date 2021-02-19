@@ -1,4 +1,4 @@
-﻿#include "Sphere.h"
+﻿#include "sphere.h"
 
 #include <vector>
 #include <iostream>
@@ -12,7 +12,6 @@ Sphere::Sphere()
 	m_vao = 0;
 	m_vboVertex = 0;
 	m_vboIndex = 0;
-	shaderProgram = 0;
 
 	lats = 40;
 	longs = 40;
@@ -23,10 +22,10 @@ Sphere::~Sphere()
 
 }
 
-void Sphere::init(int shaderProg)
+void Sphere::init(GLuint vertexPositionID)
 {
 	int i, j;
-	std::vector<float> vertices;
+	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
 	int indicator = 0;
 	for (i = 0; i <= lats; i++) {
@@ -46,18 +45,12 @@ void Sphere::init(int shaderProg)
 			vertices.push_back(x * zr0);
 			vertices.push_back(y * zr0);
 			vertices.push_back(z0);
-			vertices.push_back(1.0f);
-			vertices.push_back(1.0f);
-			vertices.push_back(1.0f);
 			indices.push_back(indicator);
 			indicator++;
 
 			vertices.push_back(x * zr1);
 			vertices.push_back(y * zr1);
 			vertices.push_back(z1);
-			vertices.push_back(1.0f);
-			vertices.push_back(1.0f);
-			vertices.push_back(1.0f);
 			indices.push_back(indicator);
 			indicator++;
 		}
@@ -67,32 +60,21 @@ void Sphere::init(int shaderProg)
 	// 创建并绑定环境
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
-	int n = vertices.size();
-
-	float* verticesArray = new float[n];
-	for (int i = 0; i < n; i++) {
-		verticesArray[i] = vertices[i];
-	}
 
 	glGenBuffers(1, &m_vboVertex);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vboVertex);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesArray), verticesArray, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //tells gpu how to interpret vertices for positions
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));   //interpret the colours
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(vertexPositionID, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(vertexPositionID);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	/*glGenBuffers(1, &m_vboIndex);
+	glGenBuffers(1, &m_vboIndex);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIndex);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);*/
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
 	numsToDraw = indices.size();
 
 	isInited = true;
-	shaderProgram = shaderProg;
 }
 
 void Sphere::cleanup()
@@ -124,8 +106,8 @@ void Sphere::draw()
 
 	// draw sphere
 	glBindVertexArray(m_vao);
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
-	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glEnable(GL_PRIMITIVE_RESTART);
+	glPrimitiveRestartIndex(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIndex);
 	glDrawElements(GL_QUAD_STRIP, numsToDraw, GL_UNSIGNED_INT, NULL);
 }

@@ -42,15 +42,15 @@
     void drawCharles(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
 	void drawMax(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
     void drawLines(int shaderProgram, glm::vec3 scalingVector);
-	void drawSphere(int shaderProgram, int vao, int vboIndex, int numsToDraw);
 	void drawCircle(int shaderProgram);
     void drawGrid(int shaderProgram, glm::vec3 translationMatrix, glm::vec3 scalingVector);
     void reset();
 
 
 	//quiz
-	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
-	void drawSphere(int shaderProgram);
+	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4], int VAO_circle, int VAO_cube);
+	void drawSphereTest(int shaderProgram);
+	void drawCylinder();
 	//Selected letter
 	//0:B 1:O 2:U 3:Z 4:I 5:D
 	int currentLetter = -1;
@@ -405,8 +405,9 @@
 		}
 
 		//draw sphere
-		//Sphere sphere;
-		//sphere.init(shaderProgram);
+		/*Sphere sphere;
+		int aPosAttrib = glGetAttribLocation(shaderProgram, "aPos");
+		sphere.init(aPosAttrib);*/
 		//drawSphere(shaderProgram);
 
 
@@ -432,14 +433,14 @@
 			glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 
 			//draw Sphere 2
-			//glm::mat4 modelMatrix = glm::mat4(1.0f);
-			//unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
-			//glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-			//sphere.draw();
+			/*glm::mat4 modelMatrix = glm::mat4(1.0f);
+			unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+			glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			sphere.draw();*/
 
 			//draw grid
-            /*glBindVertexArray(VAO_grid);
-            drawGrid(shaderProgram, glm::vec3(0.0f, -0.025f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));*/
+            glBindVertexArray(VAO_grid);
+            drawGrid(shaderProgram, glm::vec3(0.0f, -0.025f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
 
 			//draw axis
             glEnable(GL_LINE_SMOOTH);
@@ -449,15 +450,18 @@
             glDisable(GL_LINE_SMOOTH);
 
             //draw circle
-            //glBindVertexArray(VAO_circle);
-			//drawCircle(shaderProgram);
+            glBindVertexArray(VAO_circle);
+			drawCircle(shaderProgram);
+
+			//draw cylinders
+			drawCylinder();
             
 			//draw students
 			glBindVertexArray(VAO_cube);
 			/*drawJulie(shaderProgram, studentMatrixArray[0], rotation_angles);
 			drawClaudia(shaderProgram, studentMatrixArray[1], rotation_angles);*/
 			drawCamil(shaderProgram, glm::mat4(1.0f), rotation_angles);
-			drawCamilLast(shaderProgram, glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -16.0f)), rotation_angles);
+			drawCamilLast(shaderProgram, glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -16.0f)), rotation_angles, VAO_circle, VAO_cube);
 			/*drawCharles(shaderProgram, studentMatrixArray[3], rotation_angles);
             drawMax(shaderProgram, studentMatrixArray[4], rotation_angles);*/
             
@@ -617,20 +621,28 @@
          */
     }
 
-	void drawSphere(int shaderProgram, int vao, int vboIndex, int numsToDraw) {
+	void drawSphereTest(int shaderProgram) {
 
-		//modelMatrix = position of lines in world
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		glm::mat4 transform = glm::mat4(1.0f);
-		modelMatrix = transform * glm::mat4(1.0f);
-		unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
-		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		transform = glm::mat4(1.0f);
+		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (4.0f / 64.0f), (4.0f / 64.0f)));
+		glm::mat4 modelMatrix = transform * glm::mat4(1.0f);
+		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-		glBindVertexArray(vao);
-		glEnable(GL_PRIMITIVE_RESTART);
-		glPrimitiveRestartIndex(GL_PRIMITIVE_RESTART_FIXED_INDEX);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndex);
-		glDrawElements(GL_QUAD_STRIP, numsToDraw, GL_UNSIGNED_INT, NULL);
+		for (int i = 0; i < 361; i++) {
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, -8.0f));
+			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (4.0f / 64.0f), (4.0f / 64.0f)));
+
+			modelMatrix = transform * glm::mat4(1.0f);
+			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+
+		}
 	}
 
 	void drawCircle(int shaderProgram)
@@ -643,19 +655,7 @@
 		unsigned int worldMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 		glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-		for (int i = 0; i < 361; i++) {
-
-			transform = glm::mat4(1.0f);
-			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
-
-			modelMatrix = transform * glm::mat4(1.0f);
-			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
-
-		}
-
-		for (int i = 0; i < 361; i++) {
+		/*for (int i = 0; i < 361; i++) {
 
 			transform = glm::mat4(1.0f);
 			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -675,7 +675,19 @@
 			modelMatrix = transform * glm::mat4(1.0f);
 			glUniformMatrix4fv(worldMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 30);
+		}*/
+	}
+
+	void drawCylinder() {
+		glBegin(GL_QUAD_STRIP);
+		float PI = 3.14159265f;
+		for (int j = 0; j <= 360; j += 5) {
+			glColor3f(1.0, 1.0, 0.0);
+			glVertex3f(cos(PI / 180 * (j)), +1, sin(PI / 180 * (j)));
+			glColor3f(0.0, 1.0, 0.0);
+			glVertex3f(cos(PI / 180 * (j)), -1, sin(PI / 180 * (j)));
 		}
+		glEnd();
 	}
 
     void drawJulie(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
@@ -787,7 +799,7 @@
         LetterHelper::draw1(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
-	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4])
+	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4], int VAO_circle, int VAO_cube)
 	{
 		glm::vec3 translationVectorArray[6] = {
 				glm::vec3(0.0f, 20.0f, 0.0f),
@@ -807,27 +819,27 @@
 		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawBLast(shaderProgram, letterMatrixArray[0], studentMatrix * lastLetterMatrixArray[0]); //check this function for detailed explanation
+		LetterHelper::drawBLast(shaderProgram, letterMatrixArray[0], studentMatrix * lastLetterMatrixArray[0], VAO_circle, VAO_cube); //check this function for detailed explanation
 
 		cubeColor = glm::vec3(1.0f, 1.0f, 0.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawOLast(shaderProgram, letterMatrixArray[1], studentMatrix * lastLetterMatrixArray[1]);
+		LetterHelper::drawOLast(shaderProgram, letterMatrixArray[1], studentMatrix * lastLetterMatrixArray[1], VAO_circle, VAO_cube);
 
 		cubeColor = glm::vec3(1.0f, 0.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawULast(shaderProgram, letterMatrixArray[2], studentMatrix * lastLetterMatrixArray[2]);
+		LetterHelper::drawULast(shaderProgram, letterMatrixArray[2], studentMatrix * lastLetterMatrixArray[2], VAO_circle, VAO_cube);
 
 		cubeColor = glm::vec3(0.0f, 1.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawZLast(shaderProgram, letterMatrixArray[3], studentMatrix * lastLetterMatrixArray[3]);
+		LetterHelper::drawZLast(shaderProgram, letterMatrixArray[3], studentMatrix * lastLetterMatrixArray[3], VAO_circle, VAO_cube);
 
 		cubeColor = glm::vec3(1.0f, 0.0f, 0.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawILast(shaderProgram, letterMatrixArray[4], studentMatrix * lastLetterMatrixArray[4]);
+		LetterHelper::drawILast(shaderProgram, letterMatrixArray[4], studentMatrix * lastLetterMatrixArray[4], VAO_circle, VAO_cube);
 
 		cubeColor = glm::vec3(0.0f, 0.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix * lastLetterMatrixArray[5]);
+		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix * lastLetterMatrixArray[5], VAO_circle, VAO_cube);
 
 		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
