@@ -133,7 +133,6 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	//bottom base 1
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.5f, -1.25f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
@@ -146,7 +145,6 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	//bottom base 2
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(1.5f, -1.25f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
@@ -159,7 +157,6 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	//3rd cube: top part
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.5f, 1.30f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
@@ -179,7 +176,6 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	//4th cube: middle part 1
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.5f, 0.0f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
@@ -192,7 +188,6 @@ void LetterHelper::drawBLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	//4th cube: middle part 2
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(1.5f, 0.0f, 0.0f)); //third translate
-	//transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); //second rotate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
