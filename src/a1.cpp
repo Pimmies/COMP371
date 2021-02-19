@@ -397,6 +397,13 @@
 		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
 
 
+		//init lastLetterMatrixArray
+		for (int i = 0; i < 6; i++) {
+			lastLetterMatrixArray[i] = glm::mat4(1.0f);
+			glm::translate(lastLetterMatrixArray[i], glm::vec3(0, 0, -16.0f));
+		}
+
+
 		//RENDER LOOP
 		while (!glfwWindowShouldClose(window))
 		{
@@ -759,27 +766,27 @@
 		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawBLast(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+		LetterHelper::drawBLast(shaderProgram, letterMatrixArray[0], studentMatrix * lastLetterMatrixArray[0]); //check this function for detailed explanation
 
 		cubeColor = glm::vec3(1.0f, 1.0f, 0.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawOLast(shaderProgram, letterMatrixArray[1], studentMatrix);
+		LetterHelper::drawOLast(shaderProgram, letterMatrixArray[1], studentMatrix * lastLetterMatrixArray[1]);
 
 		cubeColor = glm::vec3(1.0f, 0.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawULast(shaderProgram, letterMatrixArray[2], studentMatrix);
+		LetterHelper::drawULast(shaderProgram, letterMatrixArray[2], studentMatrix * lastLetterMatrixArray[2]);
 
 		cubeColor = glm::vec3(0.0f, 1.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawZLast(shaderProgram, letterMatrixArray[3], studentMatrix);
+		LetterHelper::drawZLast(shaderProgram, letterMatrixArray[3], studentMatrix * lastLetterMatrixArray[3]);
 
 		cubeColor = glm::vec3(1.0f, 0.0f, 0.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawILast(shaderProgram, letterMatrixArray[4], studentMatrix);
+		LetterHelper::drawILast(shaderProgram, letterMatrixArray[4], studentMatrix * lastLetterMatrixArray[4]);
 
 		cubeColor = glm::vec3(0.0f, 0.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
-		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix);
+		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix * lastLetterMatrixArray[5]);
 
 		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
