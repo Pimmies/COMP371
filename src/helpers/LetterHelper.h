@@ -31,6 +31,7 @@ public:
 	static void drawZLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube);
 	static void drawILast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube);
 	static void drawDLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix, int VAO_circle, int VAO_cube);
+	static void draw7(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void draw1(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void draw3(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);
     static void drawN(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix);

@@ -88,6 +88,7 @@ void LetterHelper::drawB(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 st
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+//Draws the sphere when called but makes sure to bind the vertex array for cubes before ending.
 void LetterHelper::drawSphere(int shaderProgram, glm::mat4 matrixToApply, int VAO_circle, int VAO_cube){
 	
 	glBindVertexArray(VAO_circle);
@@ -335,6 +336,58 @@ void LetterHelper::drawZLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 	glDrawArrays(GL_TRIANGLES, 0, 36); //draw cube
+
+	//2nd cube: top base
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(0.1f, 1.75f, 0.0f)); //second translate
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//3rd cube: slanted part top 
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(0.2f, 1.2f, 0.0f)); //second translate
+	transform = glm::rotate(transform, glm::radians(70.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//3rd cube: slanted part bottom 
+	transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(-0.1f, 0.4f, 0.0f)); //second translate
+	transform = glm::rotate(transform, glm::radians(70.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void LetterHelper::draw7(int shaderProgram, glm::mat4 letterMatrix, glm::mat4 studentMatrix)
+{
+	//1st cube: bottom base
+	glm::mat4 transform = glm::mat4(1.0f);
+	transform = glm::translate(transform, glm::vec3(0.05f, 0.0f, 0.0f)); //second translate
+	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
+
+	//update uniform location model matrix
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	modelMatrix = studentMatrix * letterMatrix * transform;
+
+	unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
 
 	//2nd cube: top base
 	transform = glm::mat4(1.0f);

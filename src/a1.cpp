@@ -51,10 +51,11 @@
 	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4], int VAO_circle, int VAO_cube);
 	void drawSphereTest(int shaderProgram);
 	void drawCylinder(int shaderProgram);
+	void draw371(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[3]);
 	//Selected letter
-	//0:B 1:O 2:U 3:Z 4:I 5:D
+	//0:B 1:O 2:U 3:Z 4:I 5:D 6:I (last one)
 	int currentLetter = -1;
-	glm::mat4 lastLetterMatrixArray[6];
+	glm::mat4 lastLetterMatrixArray[7];
 
 // screen size settings
 	const unsigned int SCR_WIDTH = 1024;
@@ -87,6 +88,7 @@
 	float lastX = SCR_WIDTH / 2.0;  //the mouse cursor is initially in the middle of the screen
 	float lastY = SCR_HEIGHT / 2.0;
 	float fieldOfView = 45.0f; //perspective viewing angle. Will change when we zoom in and out
+	float bonusAngle = 0.0f;
 
 	//delta time between frames
 	float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -268,7 +270,7 @@
 
 
         //SETTING VERTEX ATTRIBUTES
-        unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid, VAO_sphere, VBO_sphere, VBO_sphere_index;
+		unsigned int VAO_cube, VBO_cube, VAO_axis, VBO_axis, VAO_circle, VBO_cirle, VAO_grid, VBO_grid;
 		glGenVertexArrays(1, &VAO_cube);
 		glGenBuffers(1, &VBO_cube); //stores vertices of cube
 		glBindVertexArray(VAO_cube);
@@ -345,7 +347,7 @@
 
 
 		//init lastLetterMatrixArray
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 7; i++) {
 			lastLetterMatrixArray[i] = glm::mat4(1.0f);
 			glm::translate(lastLetterMatrixArray[i], glm::vec3(0, 0, -16.0f));
 		}
@@ -387,7 +389,7 @@
             glBindVertexArray(VAO_circle);
 			drawCircle(shaderProgram);
 
-			//draw base spheres
+			//draw base spheres references
 			drawSphereTest(shaderProgram);
 
 			//draw cylinders
@@ -396,12 +398,23 @@
 			//draw students
 			glBindVertexArray(VAO_cube);
 
+			//Bonus: Rotating near origin
+			bonusAngle += 45.0f * deltaTime;
 			glm::mat4 bonusTransform = glm::mat4(1.0f);
-			bonusTransform = glm::rotate(bonusTransform, glm::radians(1.0f*deltaTime), glm::vec3(1.0f, 0.0f, 0.0f));
+			bonusTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 6.0f));
+			bonusTransform = glm::rotate(bonusTransform, glm::radians(-bonusAngle), glm::vec3(0.0f, 0.1f, 0.0f));
 			drawCamil(shaderProgram, bonusTransform, rotation_angles);
+
+			//Bonus: Rotating near letters
+			bonusAngle += 45.0f * deltaTime;
+			glm::mat4 bonusTransform2 = glm::mat4(1.0f);
+			bonusTransform2 = glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 10.0f, -16.0f));
+			bonusTransform2 = glm::rotate(bonusTransform2, glm::radians(-bonusAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+			draw371(shaderProgram, bonusTransform2, rotation_angles);
+
+			//Main task
 			drawCamilLast(shaderProgram, glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -16.0f)), rotation_angles, VAO_circle, VAO_cube);
-			/*drawCharles(shaderProgram, studentMatrixArray[3], rotation_angles);
-            drawMax(shaderProgram, studentMatrixArray[4], rotation_angles);*/
+			
             
 			glfwSwapBuffers(window);
 			glfwPollEvents();
@@ -536,6 +549,8 @@
         glDrawArrays(GL_LINES, 0, 6);
     }
 
+
+	//Draws the spheres for reference.
 	void drawSphereTest(int shaderProgram) {
 
 		glm::mat4 transform = glm::mat4(1.0f);
@@ -550,7 +565,8 @@
 		for (int i = 0; i < 361; i++) {
 
 			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, -8.0f));
+
+			transform = glm::translate(transform, glm::vec3(10.0f, 10.0f, -16.0f));
 			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
 
@@ -564,7 +580,7 @@
 		for (int i = 0; i < 361; i++) {
 
 			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(2.0f, 0.0f, -8.0f));
+			transform = glm::translate(transform, glm::vec3(8.0f, 8.0f, -16.0f));
 			transform = glm::rotate(transform, glm::radians(i * 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (2.0f / 64.0f), (2.0f / 64.0f)));
 
@@ -604,7 +620,7 @@
 		for (int i = 0; i < 251; i++) {
 
 			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, i * 0.01f, 2.0f));
+			transform = glm::translate(transform, glm::vec3(0.0f, i * 0.01f, 0.0f));
 			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
 
@@ -630,7 +646,7 @@
 		for (int i = 0; i < 251; i++) {
 
 			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(i * 0.01f, 0.0f, 2.0f));
+			transform = glm::translate(transform, glm::vec3(i * 0.01f, 0.0f, 0.0f));
 			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
@@ -657,7 +673,7 @@
 		for (int i = 0; i < 251; i++) {
 
 			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0, 0.0f, 2+i * 0.01f));
+			transform = glm::translate(transform, glm::vec3(0.0, 0.0f, i * 0.01f));
 			transform = glm::rotate(transform, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			transform = glm::scale(transform, glm::vec3((1.0f / 64.0f), (1.0f / 64.0f), (1.0f / 64.0f)));
 
@@ -777,18 +793,44 @@
         LetterHelper::draw1(shaderProgram, letterMatrixArray[3], studentMatrix);
 	}
 
+	void draw371(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[3])
+	{
+		glm::vec3 translationVectorArray[3] = {
+				glm::vec3(-4.0f, 0.0f, 0.0f),
+				glm::vec3(-2.5f, 0.0f, 0.0f),
+				glm::vec3(-0.8f, 0.0f, 0.0f)
+		};
+
+		glm::mat4 letterMatrixArray[3];
+		for (int i = 0; i < 3; i++) {
+			letterMatrixArray[i] = glm::mat4(1.0f);
+			letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
+			letterMatrixArray[i] = glm::translate(letterMatrixArray[i], glm::vec3(0.0f, 1.0f, 0.0f));
+			letterMatrixArray[i] = glm::rotate(letterMatrixArray[i], glm::radians(rotation_angles[i]), glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+		//draw letters
+
+		cubeColor = glm::vec3(0.3f, 0.3f, 1.0f);
+		unsigned int cubeColorLoc = glGetUniformLocation(shaderProgram, "cubeColor");
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
+		LetterHelper::draw3(shaderProgram, letterMatrixArray[0], studentMatrix); //check this function for detailed explanation
+		LetterHelper::draw7(shaderProgram, letterMatrixArray[1], studentMatrix);
+		LetterHelper::draw1(shaderProgram, letterMatrixArray[2], studentMatrix);
+	}
+
 	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4], int VAO_circle, int VAO_cube)
 	{
-		glm::vec3 translationVectorArray[6] = {
-				glm::vec3(-0.7f, 16.0f, 0.0f),
+		glm::vec3 translationVectorArray[7] = {
+				glm::vec3(-0.7f, 18.0f, 0.0f),
+				glm::vec3(0.0f, 14.0f, 0.0f),
 				glm::vec3(0.0f, 12.0f, 0.0f),
 				glm::vec3(0.0f, 9.0f, 0.0f),
-				glm::vec3(0.0f, 6.0f, 0.0f),
-				glm::vec3(0.0f, 3.5f, 0.0f),
-				glm::vec3(0.0f, 0.0f, 0.0f)
+				glm::vec3(0.0f, 6.5f, 0.0f),
+				glm::vec3(0.0f, 3.0f, 0.0f),
+				glm::vec3(0.0f, 0.5f, 0.0f)
 		};
-		glm::mat4 letterMatrixArray[6];
-		for (int i = 0; i < 6; i++) {
+		glm::mat4 letterMatrixArray[7];
+		for (int i = 0; i < 7; i++) {
 			letterMatrixArray[i] = glm::mat4(1.0f);
 			letterMatrixArray[i] = glm::translate(letterMatrixArray[i], translationVectorArray[i]);
 		}
@@ -818,6 +860,10 @@
 		cubeColor = glm::vec3(0.0f, 0.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 		LetterHelper::drawDLast(shaderProgram, letterMatrixArray[5], studentMatrix * lastLetterMatrixArray[5], VAO_circle, VAO_cube);
+
+		cubeColor = glm::vec3(0.3f, 0.3f, 1.0f);
+		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
+		LetterHelper::drawILast(shaderProgram, letterMatrixArray[6], studentMatrix * lastLetterMatrixArray[6], VAO_circle, VAO_cube);
 
 		cubeColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
@@ -974,7 +1020,9 @@
 			currentLetter = 4;
 		if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
 			currentLetter = 5;
-        if(glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS
+		if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
+			currentLetter = 6;
+        if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS
            || glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS){
             currentLetter = -1;
         }
@@ -1003,56 +1051,56 @@
 	//scales up currentLetter by 0.1
 	void scaleModelUp()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::scale(lastLetterMatrixArray[currentLetter], glm::vec3(1.1f, 1.1f, 1.1f));
 	}
 
 	//scales down currentLetter by 0.1
 	void scaleModelDown()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::scale(lastLetterMatrixArray[currentLetter], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
 	}
 	
 	//moves the currentLetter 1 units to the left
 	void moveModelLeft()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(-1.0f, 0.0f, 0.0f));
 	}
 
 	//moves currentLetter 1 units to the right
 	void moveModelRight()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	//moves currentLetter 1 units up
 	void moveModelUp()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 	//moves currentLetter 1 units down
 	void moveModelDown()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 
 	//rotates currentLetter left
 	void rotateModelLeft()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::rotate(lastLetterMatrixArray[currentLetter], glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 	
 	//rotates currentLetter right
 	void rotateModelRight()
 	{
-		if (currentLetter >= 0 && currentLetter <= 5)
+		if (currentLetter >= 0 && currentLetter <= 6)
 			lastLetterMatrixArray[currentLetter] = glm::rotate(lastLetterMatrixArray[currentLetter], glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 

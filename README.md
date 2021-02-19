@@ -1,23 +1,16 @@
 # COMP371-A1
 
 ## Contributors
-Camil Bouzidi - 40099611 <br />
+Main - Camil Bouzidi - 40099611 <br />
 Charles Abou Haidar - 40024373<br />
 Claudia Guerreiro - 26951929<br />
 Julie Pierrisnard 40077165<br />
 Ningyuan Sun 40124859<br />
 
 ## Controls:
-Right click + move cursor along x-axis = pan<br />
-Middle click + move cursor along y-axis = tilt<br />
-Left click + move cursor along y-axis = zoom<br />
 Direction arrows = "fly" around<br />
 
-P = Render models as points<br />
-L = Render models as lines<br />
-T = Render models as filled triangles<br />
-
-Keys 1-5 = select a model<br />
+Keys 1-7 = select a letter from BOUZIDI<br />
 W = move selected model up<br />
 A = move selected model left<br />
 S = move selected model down<br />
@@ -27,13 +20,27 @@ J = scale selected model down<br />
 Q = rotate selected model left<br />
 E = rotate selected model right<br />
 
-B = rotate world +x axis (anticlockwise)<br />
-M = rotate world -x axis (anticlockwise)<br />
-N = rotate world down around y-axis<br />
-H = rotate world up around y-axis<br />
-SPACE KEY = reset world rotation<br />
-
 Escape key = exit the application<br />
+
+## BONUS:
+- Added white unit and white elongated spheres for references (on the right of Bouzidi)
+- Added a rotating CB41 near the origin
+- Added an additional letter to my last name production
+- Added a roating 371 to the left of my last name
+
+- Right click + move cursor along x-axis = pan<br />
+- Middle click + move cursor along y-axis = tilt<br />
+- Left click + move cursor along y-axis = zoom<br />
+
+- B = rotate world +x axis (anticlockwise)<br />
+- M = rotate world -x axis (anticlockwise)<br />
+- N = rotate world down around y-axis<br />
+- H = rotate world up around y-axis<br />
+- SPACE KEY = reset world rotation<br />
+
+- P = Render models as points<br />
+- L = Render models as lines<br />
+- T = Render models as filled triangles<br />
 
 
 ## Build Instructions
