@@ -1010,7 +1010,9 @@
 			currentLetter = 3;
 		if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
 			currentLetter = 4;
-        if(glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS
+		if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+			currentLetter = 5;
+        if(glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS
            || glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS){
             currentLetter = -1;
         }
@@ -1039,56 +1041,56 @@
 	//scales up currentLetter by 0.1
 	void scaleModelUp()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::scale(lastLetterMatrixArray[currentLetter], glm::vec3(1.1f, 1.1f, 1.1f));
 	}
 
 	//scales down currentLetter by 0.1
 	void scaleModelDown()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::scale(lastLetterMatrixArray[currentLetter], glm::vec3((float)(1.0/1.1), (float)(1.0/1.1), (float)(1.0/1.1)));
 	}
 	
 	//moves the currentLetter 1 units to the left
 	void moveModelLeft()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(-1.0f, 0.0f, 0.0f));
 	}
 
 	//moves currentLetter 1 units to the right
 	void moveModelRight()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	//moves currentLetter 1 units up
 	void moveModelUp()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 	//moves currentLetter 1 units down
 	void moveModelDown()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::translate(lastLetterMatrixArray[currentLetter], glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 
 	//rotates currentLetter left
 	void rotateModelLeft()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::rotate(lastLetterMatrixArray[currentLetter], glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 	
 	//rotates currentLetter right
 	void rotateModelRight()
 	{
-		if (currentLetter >= 0 && currentLetter <= 4)
+		if (currentLetter >= 0 && currentLetter <= 5)
 			lastLetterMatrixArray[currentLetter] = glm::rotate(lastLetterMatrixArray[currentLetter], glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 

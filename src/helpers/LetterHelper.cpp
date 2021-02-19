@@ -243,7 +243,7 @@ void LetterHelper::drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//1st cube: long vertical left
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(-0.50f, 1.0f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(-0.50f, 0.75f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
@@ -265,7 +265,7 @@ void LetterHelper::drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//3rd cube: long vertical right
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.50f, 1.0f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(0.50f, 0.75f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
@@ -275,7 +275,7 @@ void LetterHelper::drawOLast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//4th cube: top base
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.0f, 2.0f, 0.0f)); //second translate
+	transform = glm::translate(transform, glm::vec3(0.0f, 1.5f, 0.0f)); //second translate
 	transform = glm::scale(transform, glm::vec3(1.0f, 0.5f, 0.25f));  //first scale
 
 	//update uniform location model matrix
@@ -295,7 +295,7 @@ void LetterHelper::drawULast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//1st cube: long vertical left
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(-0.50f, 1.0f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(-0.50f, 0.75f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
@@ -317,7 +317,7 @@ void LetterHelper::drawULast(int shaderProgram, glm::mat4 letterMatrix, glm::mat
 
 	//3rd cube: long vertical right
 	transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.50f, 1.0f, 0.0f));
+	transform = glm::translate(transform, glm::vec3(0.50f, 0.75f, 0.0f));
 
 	//update uniform location model matrix
 	modelMatrix = glm::mat4(1.0f);
