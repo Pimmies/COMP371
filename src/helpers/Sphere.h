@@ -10,10 +10,10 @@ class Sphere
 public:
 	Sphere();
 	~Sphere();
-	void init(GLuint vertexPositionID);
+	void init(int shaderProg);
 	void cleanup();
 	void draw();
-	int lats, longs;
+	int lats, longs, shaderProgram;
 	bool isInited;
 	GLuint m_vao, m_vboVertex, m_vboIndex;
 	int numsToDraw;

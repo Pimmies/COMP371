@@ -15,7 +15,7 @@
 #include <glm/common.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "helpers/LetterHelper.h"
-//#include "helpers/Sphere.h"
+#include "helpers/Sphere.h"
 #include <vector>
 
 //declare our functions
@@ -50,6 +50,7 @@
 
 	//quiz
 	void drawCamilLast(int shaderProgram, glm::mat4 studentMatrix, float rotation_angles[4]);
+	void drawSphere(int shaderProgram);
 	//Selected letter
 	//0:B 1:O 2:U 3:Z 4:I 5:D
 	int currentLetter = -1;
@@ -266,7 +267,7 @@
         };
 
 		//Create sphere vertices
-		int i, j;
+		/*int i, j;
 		int lats = 10;
 		int longs = 10;
 		std::vector<GLfloat> s_vertices;
@@ -301,7 +302,7 @@
 			indices.push_back(GL_PRIMITIVE_RESTART_FIXED_INDEX);
 		}
 
-		int numsToDraw = indices.size();
+		int numsToDraw = indices.size();*/
 
 
         //SETTING VERTEX ATTRIBUTES
@@ -403,6 +404,11 @@
 			glm::translate(lastLetterMatrixArray[i], glm::vec3(0, 0, -16.0f));
 		}
 
+		//draw sphere
+		//Sphere sphere;
+		//sphere.init(shaderProgram);
+		//drawSphere(shaderProgram);
+
 
 		//RENDER LOOP
 		while (!glfwWindowShouldClose(window))
@@ -425,11 +431,15 @@
 			glUniformMatrix4fv(worldLoc, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 			glUniform3fv(cubeColorLoc, 1, glm::value_ptr(cubeColor));
 
-
+			//draw Sphere 2
+			//glm::mat4 modelMatrix = glm::mat4(1.0f);
+			//unsigned int modelMatrixLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+			//glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			//sphere.draw();
 
 			//draw grid
-            glBindVertexArray(VAO_grid);
-            drawGrid(shaderProgram, glm::vec3(0.0f, -0.025f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));
+            /*glBindVertexArray(VAO_grid);
+            drawGrid(shaderProgram, glm::vec3(0.0f, -0.025f, 0.0f), glm::vec3(0.25f, 0.25f, 0.25f));*/
 
 			//draw axis
             glEnable(GL_LINE_SMOOTH);
@@ -439,11 +449,8 @@
             glDisable(GL_LINE_SMOOTH);
 
             //draw circle
-            glBindVertexArray(VAO_circle);
-			drawCircle(shaderProgram);
-
-			//draw sphere
-			//drawSphere(shaderProgram, VAO_sphere, VBO_sphere_index, numsToDraw);
+            //glBindVertexArray(VAO_circle);
+			//drawCircle(shaderProgram);
             
 			//draw students
 			glBindVertexArray(VAO_cube);
